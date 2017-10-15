@@ -15,6 +15,7 @@
     "start": "nps"
   },
   "dependencies": {
+    "prop-types": "^15.6.0",
     "react": "16.0.0",
     "rxjs": "^5.4.3"
   },
@@ -25,6 +26,7 @@
     "@types/fbemitter": "^2.0.32",
     "@types/jest": "^21.1.0",
     "@types/node": "^8.0.31",
+    "@types/prop-types": "^15.5.2",
     "@types/react": "^16.0.7",
     "@types/react-dom": "^15.5.4",
     "@types/react-test-renderer": "^15.5.4",
