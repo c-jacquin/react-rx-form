@@ -27,9 +27,4 @@
         "src",
         "node_modules/@chazzz/base-type"
     ],
-    "exclude": [
-        "src/**/__mocks__/*",
-        "src/**/__tests__/*",
-        "src/**/types.ts"
-    ]
 }

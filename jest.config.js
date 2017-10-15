@@ -11,15 +11,11 @@ module.exports = {
         'node_modules',
         'src'
     ],
-    moduleFileExtensions: [
-        'js',
-        'ts',
-        'tsx'
-    ],
-    preset: 'jest-expo-ts',
+    moduleFileExtensions: ["js", "jsx", "json", "ts", "tsx"],
     setupFiles: [
         './_scripts_/testHook/test-setup.js'
     ],
+    testMatch: ['**/__tests__/*.(ts|tsx|js)'],
     testPathIgnorePatterns: [
         '<rootDir>/build/',
         '<rootDir>/node_modules/'
