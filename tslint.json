@@ -1,0 +1,4 @@
+{
+    "extends": ["tslint:latest", "@chazzz/tslint-react-config"],
+    "rules": {}
+}
