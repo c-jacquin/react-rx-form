@@ -6,25 +6,24 @@
         "jsx": "react",
         "sourceMap": true,
         "outDir": "dist",
-        "rootDir": "src",
+        "rootDir": "./src",
         "removeComments": true,
         "lib":["dom","es2017"],
         "strict": true,
+        "strictFunctionTypes": false,
         "noImplicitAny": true,
         "strictNullChecks": true,
         "noImplicitThis": true,
         "alwaysStrict": true,
         "moduleResolution": "node",
-        "baseUrl": "src",
-        "typeRoots": [
-            "src/typings",
-            "node_modules/@chazzz/base-type"
-        ],
         "allowSyntheticDefaultImports": true,
         "experimentalDecorators": true
     },
     "include": [
-        "src",
-        "node_modules/@chazzz/base-type"
+        "src"
     ],
+    "exclude": [
+        "src/**/__mocks__/*",
+        "src/**/__tests__/*"
+    ]
 }

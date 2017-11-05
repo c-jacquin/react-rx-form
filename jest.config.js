@@ -13,7 +13,7 @@ module.exports = {
     ],
     moduleFileExtensions: ["js", "jsx", "json", "ts", "tsx"],
     setupFiles: [
-        './_scripts_/testHook/test-setup.js'
+        './_scripts_/test/test-setup.js'
     ],
     testMatch: ['**/__tests__/*.(ts|tsx|js)'],
     testPathIgnorePatterns: [

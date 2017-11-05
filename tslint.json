@@ -1,4 +1,26 @@
 {
     "extends": ["tslint:latest", "@chazzz/tslint-react-config"],
-    "rules": {}
+    "rules": {
+        "only-arrow-functions": false,
+        "no-console": false,
+        "max-classes-per-file": false,        
+        "member-ordering": {
+            "options":{
+                "order": [
+                    "private-static-field",
+                    "protected-static-field",
+                    "public-static-field",
+                    "private-constructor",
+                    "protected-constructor",
+                    "public-constructor",
+                    "private-instance-field",
+                    "protected-instance-field",
+                    "public-instance-field",
+                    "private-instance-method",
+                    "protected-instance-method",
+                    "public-instance-method"
+                ]
+            }
+        }
+    }
 }

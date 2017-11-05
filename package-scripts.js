@@ -6,7 +6,7 @@ const {
 module.exports = {
   scripts: {
     default: {
-        description: 'transpile typescript and watch for change',
+        description: 'run and watch the example',
         script: series.nps(
             'build.prepare',
             'build.watch'
@@ -38,7 +38,7 @@ module.exports = {
     },
     release: {
         default: {
-            description: 'create a new tag depending on the last commits and update changelog accordingly, create a tag, generate documentation, commit and push',
+            description: 'create a new tag depending on the last commits and update changelog accordingly, create a tag',
             script: 'standard-version --no-verify',
         },
         first: {
@@ -48,7 +48,7 @@ module.exports = {
     },
     build: {
         default: {
-            description: 'transpile typescript src to es2015',
+            description: 'build the library',
             script: series.nps(
                 'build.prepare',
                 'build.production'
@@ -63,11 +63,11 @@ module.exports = {
         },
         watch: {
             description: 'build and watch for changes',
-            script: 'NODE_ENV=development tsc --watch',
+            script: 'NODE_ENV=development webpack-dev-server --config webpack.example.js',
         },
         production: {
             description: 'build for production',
-            script: 'NODE_ENV=production tsc',
+            script: 'NODE_ENV=production webpack',
         },
     },
     example: {
@@ -106,7 +106,7 @@ module.exports = {
             description: 'run test with istanbul test coverage',
             script: series(
                 'NODE_ENV=test jest --coverage',
-                'node _scripts_/testHook/remap-coverage',
+                'node _scripts_/test/remap-coverage',
                 'rimraf .temp -r'
             ),
         },
