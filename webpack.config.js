@@ -5,18 +5,22 @@ const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
 
 module.exports = {
     entry: {
-        app: path.resolve(__dirname, 'src/index.tsx')
+        app: path.resolve(__dirname, 'src/index.ts')
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'index.js',
-        libraryTarget: 'commonjs2'
+        libraryTarget: 'umd'
     },
     devtool: 'source-map',
     externals : {
         react: 'react',
-        'react-dom': 'ReactDOM',
-        rxjs: 'Rx'
+        'react-dom': 'react-dom',
+        rxjs: 'rxjs'
+    },
+    resolve: {
+        modules: ['node_modules', 'src'],
+        extensions: [".ts", ".tsx"]        
     },
     module: {
         rules: [
