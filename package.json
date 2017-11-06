@@ -38,7 +38,6 @@
     "cz-conventional-changelog": "^2.1.0",
     "fbemitter": "^2.1.1",
     "friendly-errors-webpack-plugin": "^1.6.1",
-    "html-webpack-plugin": "^2.30.1",
     "husky": "^0.14.3",
     "jest": "^21.2.1",
     "lint-staged": "^4.3.0",
@@ -46,7 +45,10 @@
     "nps-utils": "^1.5.0",
     "prettier": "^1.7.4",
     "react": "^16.0.0",
+    "react-docgen": "^2.19.0",
+    "react-docgen-typescript": "^1.0.2",
     "react-dom": "^16.0.0",
+    "react-styleguidist": "^6.0.32",
     "react-test-renderer": "16.0.0",
     "remap-istanbul": "^0.9.5",
     "rimraf": "^2.6.2",
@@ -56,8 +58,7 @@
     "tslint": "^5.8.0",
     "tslint-loader": "^3.5.3",
     "typescript": "^2.6.1",
-    "webpack": "^3.8.1",
-    "webpack-dev-server": "^2.9.4"
+    "webpack": "^3.8.1"
   },
   "config": {
     "commitizen": {

@@ -4,112 +4,103 @@ const {
 } = require('nps-utils')
 
 module.exports = {
-  scripts: {
-    default: {
-        description: 'run and watch the example',
-        script: series.nps(
-            'build.prepare',
-            'build.watch'
-        ),
-    },
-    commit: {
-        description: 'commit using conventionnal changelog',
-        script: 'git-cz',
-    },
-    clean: {
-        description: 'clean useless temporary directories',
-        script: concurrent({
-            cleanTemp: 'rimraf .temp -rf',
-            cleanBuild: 'rimraf dist -rf',
-            cleanCoverage: 'rimraf coverage -rf'
-        }),
-    },
-    lint: {
-        description: 'lint the code with tslint',
-        script: 'tslint "src/**/*.ts"',
-    },
-    prettier: {
-        description: 'format the code using prettier',
-        script: 'prettier --write \"src/**/*(*.ts|*.tsx)\"',
-    },
-    validate: {
-        description: 'lint the code, run the test and build',
-        script: concurrent.nps('lint', 'test', 'build'),
-    },
-    release: {
+    scripts: {
         default: {
-            description: 'create a new tag depending on the last commits and update changelog accordingly, create a tag',
-            script: 'standard-version --no-verify',
-        },
-        first: {
-            description: 'first release usualy 0.0.0',
-            script: 'standard-version --no-verify --first-release',
-        }
-    },
-    build: {
-        default: {
-            description: 'build the library',
+            description: 'run and watch the example',
             script: series.nps(
-                'build.prepare',
-                'build.production'
+                'styleguide.prepare',
+                'styleguide.watch'
             ),
         },
-        prepare: {
-            description: 'clean dist dir',
-            script: series(
-                'rimraf dist -r',
-                'mkdir dist'
-            ),
+        commit: {
+            description: 'commit using conventionnal changelog',
+            script: 'git-cz',
         },
-        watch: {
-            description: 'build and watch for changes',
-            script: 'NODE_ENV=development webpack-dev-server --config webpack.example.js',
+        clean: {
+            description: 'clean useless temporary directories',
+            script: concurrent({
+                cleanTemp: 'rimraf .temp -rf',
+                cleanBuild: 'rimraf dist -rf',
+                cleanCoverage: 'rimraf coverage -rf'
+            }),
         },
-        production: {
-            description: 'build for production',
-            script: 'NODE_ENV=production webpack',
+        lint: {
+            description: 'lint the code with tslint',
+            script: 'tslint "src/**/*.ts" -p tsconfig.json --fix',
         },
-    },
-    example: {
-        default: {
-            description: 'build the example app',
-            script: series(
-                'nps example.prepare',
-                'NODE_ENV=production tsc -p example'
-            )
+        prettier: {
+            description: 'format the code using prettier',
+            script: 'prettier --write \"src/**/*(*.ts|*.tsx)\"',
         },
-        prepare: {
-            description: 'clean the build dir',
-            script: series(
-                'rimraf build -r',
-                'mkdir build'
-            ),
+        validate: {
+            description: 'lint the code, run the test and build',
+            script: concurrent.nps('lint', 'test', 'build'),
         },
-        watch: {
-            description: 'build the example app and watch for sources',
-            script: series(
-                'nps example.prepare',
-                'NODE_ENV=development tsc --watch -p example'
-            )
+        release: {
+            default: {
+                description: 'create a new tag depending on the last commits and update changelog accordingly, create a tag',
+                script: 'standard-version --no-verify',
+            },
+            first: {
+                description: 'first release usualy 0.0.0',
+                script: 'standard-version --no-verify --first-release',
+            }
+        },
+        build: {
+            default: {
+                description: 'build the library',
+                script: series.nps(
+                    'build.prepare',
+                    'build.production'
+                ),
+            },
+            prepare: {
+                description: 'clean dist dir',
+                script: series(
+                    'rimraf dist -r',
+                    'mkdir dist'
+                ),
+            },
+            production: {
+                description: 'build for production',
+                script: 'NODE_ENV=production webpack',
+            },
+            watch: {
+                description: 'build ts app and watch for changes',
+                script: 'NODE_ENV=production webpack --watch'
+            }
+        },
+        test: {
+            default: {
+                description: 'run all the test once',
+                script: 'NODE_ENV=test jest',
+            },
+            watch: {
+                description: 'run in the amazingly intelligent Jest watch mode',
+                script: 'NODE_ENV=test jest --watch',            
+            },
+            cover: {
+                description: 'run test with istanbul test coverage',
+                script: series(
+                    'NODE_ENV=test jest --coverage',
+                    'node _scripts_/test/remap-coverage',
+                    'rimraf .temp -r'
+                ),
+            },
+        },
+        styleguide: {
+            default: {
+                description: 'build the styleguide (documentation)',
+                script: 'styleguidist build'
+            },
+            prepare: {
+                description: 'clean the directory of the styleguide',
+                script: 'rimraf docs'
+            },
+            watch: {
+                description: 'serve the styleguide and watch for changes (dev mode)',
+                script: 'styleguidist server'
+            }
         }
     },
-    test: {
-        default: {
-            description: 'run all the test once',
-            script: 'NODE_ENV=test jest',
-        },
-        watch: {
-            description: 'run in the amazingly intelligent Jest watch mode',
-            script: 'NODE_ENV=test jest --watch',            
-        },
-        cover: {
-            description: 'run test with istanbul test coverage',
-            script: series(
-                'NODE_ENV=test jest --coverage',
-                'node _scripts_/test/remap-coverage',
-                'rimraf .temp -r'
-            ),
-        },
-    },
-  },
 }
