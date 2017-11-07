@@ -10,6 +10,7 @@
         "removeComments": true,
         "lib":["dom","es2017"],
         "strict": true,
+        "baseUrl": "./src",
         "strictFunctionTypes": false,
         "noImplicitAny": true,
         "strictNullChecks": true,

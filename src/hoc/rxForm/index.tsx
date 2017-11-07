@@ -3,15 +3,7 @@ import { findDOMNode } from 'react-dom'
 import { Subscription, Subject, Observable } from 'rxjs'
 import autobind from 'autobind-decorator'
 
-import {
-  FieldValue,
-  FormValues,
-  FormSubmitValues,
-  RequiredProps,
-  RxFormState,
-  RxFormProps,
-  RxFormParams,
-} from '../../types'
+import { FieldValue, FormValues, FormSubmitValues, RequiredProps, RxFormState, RxFormProps, RxFormParams } from 'types'
 
 /**
  * Decorate a react componnent with a form tag as root
