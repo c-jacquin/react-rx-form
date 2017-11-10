@@ -36,16 +36,6 @@ module.exports = {
             description: 'lint the code, run the test and build',
             script: concurrent.nps('lint', 'test', 'build'),
         },
-        release: {
-            default: {
-                description: 'create a new tag depending on the last commits and update changelog accordingly, create a tag',
-                script: 'standard-version --no-verify',
-            },
-            first: {
-                description: 'first release usualy 0.0.0',
-                script: 'standard-version --no-verify --first-release',
-            }
-        },
         build: {
             default: {
                 description: 'build the library',
@@ -87,6 +77,10 @@ module.exports = {
                     'rimraf .temp -r'
                 ),
             },
+        },
+        release: {
+            description: 'do the semantic-release stuff',
+            script: 'semantic-release pre && npm publish && semantic-release post'
         },
         styleguide: {
             default: {
