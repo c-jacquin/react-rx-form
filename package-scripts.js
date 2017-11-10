@@ -7,10 +7,7 @@ module.exports = {
     scripts: {
         default: {
             description: 'run and watch the example',
-            script: series.nps(
-                'styleguide.prepare',
-                'styleguide.watch'
-            ),
+            script: 'styleguide.watch',            
         },
         commit: {
             description: 'commit using conventionnal changelog',
@@ -37,28 +34,12 @@ module.exports = {
             script: concurrent.nps('lint', 'test', 'build'),
         },
         build: {
-            default: {
-                description: 'build the library',
-                script: series.nps(
-                    'build.prepare',
-                    'build.production'
-                ),
-            },
-            prepare: {
-                description: 'clean dist dir',
-                script: series(
-                    'rimraf dist -r',
-                    'mkdir dist'
-                ),
-            },
-            production: {
-                description: 'build for production',
-                script: 'NODE_ENV=production webpack',
-            },
-            watch: {
-                description: 'build ts app and watch for changes',
-                script: 'NODE_ENV=production webpack --watch'
-            }
+            description: 'build the library',
+            script: series(
+                'rimraf dist -r',
+                'mkdir dist',
+                'NODE_ENV=production webpack',
+            )
         },
         test: {
             default: {
@@ -80,16 +61,19 @@ module.exports = {
         },
         release: {
             description: 'do the semantic-release stuff',
-            script: 'semantic-release pre && npm publish && semantic-release post'
+            script: series(
+                'semantic-release pre',
+                'npm publish',
+                'semantic-release post'   
+            )
         },
         styleguide: {
             default: {
                 description: 'build the styleguide (documentation)',
-                script: 'styleguidist build'
-            },
-            prepare: {
-                description: 'clean the directory of the styleguide',
-                script: 'rimraf docs'
+                script: series(
+                    'rimraf docs',
+                    'styleguidist build'
+                )
             },
             watch: {
                 description: 'serve the styleguide and watch for changes (dev mode)',

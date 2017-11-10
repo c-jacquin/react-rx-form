@@ -7,12 +7,18 @@ import { FieldValue, FormValues, FormSubmitValues, RequiredProps, RxFormState, R
 
 /**
  * Decorate a react componnent with a form tag as root
- * @param param configuration object of the hoc
- * @param param.fields Object representing the input of the form (value, validation ...), each key must correspond with the
- * name attribute of an input element 
- * @returns a function wich take a react component as arg and return a react component
+ * @param {RxFormParams<any>} param configuration object of the hoc
+ * @param {Fields<any>} param.fields Object representing the input of the form (value, validation ...), each key must correspond with the
+ * name attribute of an input element
+ * @param {number} [param.debounce = 300] debounce in ms
+ * @param {number} [param.throttle] throttle in ms
+ * @returns {Function} a function wich take a react component as arg and return a react component
  */
-export const rxForm = function<Props extends RequiredProps>({ fields }: RxFormParams<Props>) {
+export const rxForm = function<Props extends RequiredProps>({
+  fields,
+  debounce = 300,
+  throttle = 0,
+}: RxFormParams<Props>) {
   return (Comp: React.ComponentClass<Props & RxFormProps> | React.StatelessComponent<Props & RxFormProps>) => {
     /**
      * RxForm Higher order component
@@ -273,6 +279,8 @@ export const rxForm = function<Props extends RequiredProps>({ fields }: RxFormPa
         this.inputSubscription = textInputs$
           .merge(checkBox$)
           .merge(radioButton$)
+          .debounceTime(debounce)
+          .throttleTime(throttle)
           .subscribe(this.handleInputSubscribeSuccess)
 
         this.formSubmitSubscription = this.formSubmit$
