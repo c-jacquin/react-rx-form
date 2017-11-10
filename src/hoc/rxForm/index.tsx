@@ -3,7 +3,16 @@ import { findDOMNode } from 'react-dom'
 import { Subscription, Subject, Observable } from 'rxjs'
 import autobind from 'autobind-decorator'
 
-import { FieldValue, FormValues, FormSubmitValues, RequiredProps, RxFormState, RxFormProps, RxFormParams } from 'types'
+import {
+  FieldValue,
+  FormValues,
+  FormSubmitValues,
+  RequiredProps,
+  RxFormState,
+  RxFormProps,
+  RxFormParams,
+  FormErrors,
+} from 'types'
 
 /**
  * Decorate a react componnent with a form tag as root
@@ -134,16 +143,37 @@ export const rxForm = function<Props extends RequiredProps>({
        * return an Observable of the submit event of the form element, map the data to be ready for the onSubmit handler
        */
       createFormObservable(): Observable<FormSubmitValues> {
-        return Observable.fromEvent(this.formElement, 'submit').map((event: any) => {
-          event.preventDefault()
-          return Object.keys(fields).reduce(
-            (obj, fieldName) => ({
-              ...obj,
-              [fieldName]: this.state.formValue[fieldName].value,
-            }),
-            {},
-          )
-        })
+        return (
+          Observable.fromEvent(this.formElement, 'submit')
+            .map((event: any) => {
+              event.preventDefault()
+              let errorObject = {}
+              let hasError = false
+
+              const formValue = Object.keys(fields).reduce((obj, fieldName) => {
+                if (this.state.formValue[fieldName].error) {
+                  hasError = true
+                  errorObject = {
+                    ...errorObject,
+                    [fieldName]: this.state.formValue[fieldName].error,
+                  }
+                }
+
+                return {
+                  ...obj,
+                  [fieldName]: this.state.formValue[fieldName].value,
+                }
+              }, {})
+
+              if (hasError) {
+                throw errorObject
+              }
+
+              return formValue
+            })
+            // .filter(() => !this.hasError())
+            .do(() => this.setState({ submitted: true }))
+        )
       }
 
       /**
@@ -160,11 +190,8 @@ export const rxForm = function<Props extends RequiredProps>({
       }
 
       compareFieldsWithInputName() {
-        const fieldsNames = Object.keys(fields).sort()
-        const inputNames = this.inputElements
-          .map(element => element.getAttribute('name'))
-          .sort()
-          .filter(inputName => !!inputName)
+        const fieldsNames = Object.keys(fields)
+        const inputNames = this.inputElements.map(element => element.getAttribute('name'))
 
         const missingInputNames = fieldsNames.filter(fieldName => {
           return inputNames.indexOf(fieldName) < 0
@@ -291,6 +318,13 @@ export const rxForm = function<Props extends RequiredProps>({
         )
       }
 
+      @autobind
+      handleFormSubmitSubscribeFailed(error: FormErrors) {
+        if (this.props.onError) {
+          this.props.onError(error)
+        }
+      }
+
       componentDidMount() {
         this.inputElements = Array.from(this.formElement.querySelectorAll('input')).filter(element =>
           element.hasAttribute('name'),
@@ -317,10 +351,10 @@ export const rxForm = function<Props extends RequiredProps>({
           .throttleTime(throttle)
           .subscribe(this.handleInputSubscribeSuccess)
 
-        this.formSubmitSubscription = this.formSubmit$
-          .filter(() => !this.hasError())
-          .do(() => this.setState({ submitted: true }))
-          .subscribe(this.props.onSubmit)
+        this.formSubmitSubscription = this.formSubmit$.subscribe(
+          this.props.onSubmit,
+          this.handleFormSubmitSubscribeFailed,
+        )
       }
 
       componentWillUnmount() {

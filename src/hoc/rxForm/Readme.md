@@ -83,7 +83,11 @@ const onSubmit = (formValue) => {
     console.log('form submitted ===> ', formValue)
 };
 
-<RxSimpleForm foo="john.snow.nightwatch.com" onSubmit={onSubmit} />
+const onError = (formValue) => {
+    console.log('form error ===>', formValue)
+};
+
+<RxSimpleForm foo="john.snow.nightwatch.com" onSubmit={onSubmit} onError={onError} />
 ```
 
 ### Different password validation
@@ -231,7 +235,7 @@ const { rxForm } = require('./index');
 
 class SimpleForm extends React.Component {
     componentDidCatch(error) {
-        console.error(error)
+        console.log('error catched')
     }
 
     render() {

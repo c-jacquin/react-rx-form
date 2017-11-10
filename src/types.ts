@@ -27,7 +27,8 @@ export interface Field<Props> {
 }
 
 export interface RequiredProps {
-  onSubmit: (formData: any) => any
+  onSubmit: (formValues: FormSubmitValues) => any
+  onError?: (error: FormErrors) => any
 }
 
 export interface RxFormProps {
@@ -51,4 +52,8 @@ export interface FormValues {
 
 export interface FormSubmitValues {
   [key: string]: FieldValue
+}
+
+export interface FormErrors {
+  [key: string]: string
 }
