@@ -1,13 +1,17 @@
 language: node_js
 cache:
   directories:
-    - node_modules
-
+    - ~/.npm
+notifications:
+  email: false
 node_js:
-  - "7"
-
+  - '8'
 install:
   - npm i
-
 script:
   - npm start validate
+after_success:
+  - npm start release
+branches:
+  except:
+    - /^v\d+\.\d+\.\d+$/
