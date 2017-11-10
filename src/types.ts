@@ -5,7 +5,7 @@ export type FieldValueFunc<Props> = (props: Props) => FieldValue
 
 export interface RxFormParams<Props> {
   fields: Fields<Props>
-  changeObs?: boolean
+  valueChangeObs?: boolean
   debounce?: number
   throttle?: number
 }
@@ -32,7 +32,7 @@ export interface RequiredProps {
 
 export interface RxFormProps {
   ref?: any
-  valueChange$?: Subject<FormValues>
+  valueChange$?: Subject<FormValues> | null
   formSubmit$?: Observable<FormSubmitValues>
   setValue?: (state: any) => void
   valid?: boolean

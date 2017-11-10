@@ -165,8 +165,9 @@ class SimpleForm extends React.Component {
 
 const RxSimpleForm = rxForm({
     fields: {
-        email: {}
-    }
+        email: {},
+    },
+    valueChangeObs: true
 })(SimpleForm);
 
 const onSubmit = (formValue) => {

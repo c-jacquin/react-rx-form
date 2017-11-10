@@ -16,6 +16,7 @@ import { FieldValue, FormValues, FormSubmitValues, RequiredProps, RxFormState, R
  */
 export const rxForm = function<Props extends RequiredProps>({
   fields,
+  valueChangeObs,
   debounce = 300,
   throttle = 0,
 }: RxFormParams<Props>) {
@@ -31,7 +32,7 @@ export const rxForm = function<Props extends RequiredProps>({
       /**
        * An rxjs Observable, tick each time the form state change
        */
-      valueChange$ = new Subject<FormValues>()
+      valueChange$ = valueChangeObs ? new Subject<FormValues>() : null
       /**
        * An rxjs Observable, tick when the form is submitted, call the onSubmit props
        */
@@ -255,7 +256,11 @@ export const rxForm = function<Props extends RequiredProps>({
               ...formValue,
             },
           },
-          () => this.valueChange$.next(this.state.formValue),
+          () => {
+            if (this.valueChange$) {
+              this.valueChange$.next(this.state.formValue)
+            }
+          },
         )
       }
 

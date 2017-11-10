@@ -7,7 +7,7 @@ module.exports = {
     scripts: {
         default: {
             description: 'run and watch the example',
-            script: 'styleguide.watch',            
+            script: 'styleguidist server',            
         },
         commit: {
             description: 'commit using conventionnal changelog',
@@ -39,7 +39,22 @@ module.exports = {
                 'rimraf dist -r',
                 'mkdir dist',
                 'NODE_ENV=production webpack',
-            )
+            ),
+        },
+        release: {
+            description: 'do the semantic-release stuff',
+            script: series(
+                'semantic-release pre',
+                'npm publish',
+                'semantic-release post'   
+            ),
+        },
+        styleguide: {
+            description: 'build the styleguide (documentation)',
+            script: series(
+                'rimraf docs',
+                'styleguidist build'
+            ),
         },
         test: {
             default: {
@@ -59,26 +74,5 @@ module.exports = {
                 ),
             },
         },
-        release: {
-            description: 'do the semantic-release stuff',
-            script: series(
-                'semantic-release pre',
-                'npm publish',
-                'semantic-release post'   
-            )
-        },
-        styleguide: {
-            default: {
-                description: 'build the styleguide (documentation)',
-                script: series(
-                    'rimraf docs',
-                    'styleguidist build'
-                )
-            },
-            watch: {
-                description: 'serve the styleguide and watch for changes (dev mode)',
-                script: 'styleguidist server'
-            }
-        }
     },
 }
