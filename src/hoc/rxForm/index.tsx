@@ -7,12 +7,12 @@ import { FieldValue, FormValues, FormSubmitValues, RequiredProps, RxFormState, R
 
 /**
  * Decorate a react componnent with a form tag as root
- * @param {RxFormParams<any>} param configuration object of the hoc
- * @param {Fields<any>} param.fields Object representing the input of the form (value, validation ...), each key must correspond with the
+ * @param param configuration object of the hoc
+ * @param param.fields Object representing the input of the form (value, validation ...), each key must correspond with the
  * name attribute of an input element
- * @param {number} [param.debounce = 300] debounce in ms
- * @param {number} [param.throttle] throttle in ms
- * @returns {Function} a function wich take a react component as arg and return a react component
+ * @param [param.debounce = 300] debounce in ms
+ * @param [param.throttle] throttle in ms
+ * @returns a function wich take a react component as arg and return a react component
  */
 export const rxForm = function<Props extends RequiredProps>({
   fields,
