@@ -214,7 +214,7 @@ const RxSimpleForm = rxForm({
             }
         }
     },
-    debounce: 5000,
+    debounce: 3000,
     throttle: 0
 })(SimpleForm);
 
@@ -223,4 +223,39 @@ const onSubmit = (formValue) => {
 };
 
 <RxSimpleForm foo="john.snow.nightwatch.com" onSubmit={onSubmit} />
+```
+
+### Bad usage
+```jsx
+const { rxForm } = require('./index');
+
+class SimpleForm extends React.Component {
+    componentDidCatch(error) {
+        console.error(error)
+    }
+
+    render() {
+        return (
+            <form>
+                <div>
+                    <input placeholder="modify your email" />
+                </div>
+                <div>
+                    <button type="submit">Submit form</button>
+                </div>
+            </form>
+        )
+    }
+}
+
+const RxSimpleForm = rxForm({
+    fields: {
+        email: {}
+    }
+})(SimpleForm);
+
+const onSubmit = (formValue) => {
+    console.log('form submitted ===> ', formValue)
+};
+<RxSimpleForm onSubmit={onSubmit} />
 ```

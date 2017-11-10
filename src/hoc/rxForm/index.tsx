@@ -159,6 +159,33 @@ export const rxForm = function<Props extends RequiredProps>({
         )
       }
 
+      compareFieldsWithInputName() {
+        const fieldsNames = Object.keys(fields).sort()
+        const inputNames = this.inputElements
+          .map(element => element.getAttribute('name'))
+          .sort()
+          .filter(inputName => !!inputName)
+
+        const missingInputNames = fieldsNames.filter(fieldName => {
+          return inputNames.indexOf(fieldName) < 0
+        })
+
+        const missingFieldNames = inputNames.filter(inputName => {
+          if (inputName) {
+            return fieldsNames.indexOf(inputName) < 0
+          }
+          return false
+        })
+
+        if (missingFieldNames.length > 0) {
+          throw new Error(`You forgot some field definitions: ${missingFieldNames.toString()}`)
+        }
+
+        if (missingInputNames.length > 0) {
+          throw new Error(`You forgot some name attribute on input: ${missingInputNames.toString()}`)
+        }
+      }
+
       /**
        * Check if the form has error
        */
@@ -269,6 +296,8 @@ export const rxForm = function<Props extends RequiredProps>({
           element.hasAttribute('name'),
         )
 
+        this.compareFieldsWithInputName()
+
         this.setInitialInputValues()
 
         this.formSubmit$ = this.createFormObservable()
@@ -295,8 +324,13 @@ export const rxForm = function<Props extends RequiredProps>({
       }
 
       componentWillUnmount() {
-        this.formSubmitSubscription.unsubscribe()
-        this.inputSubscription.unsubscribe()
+        if (this.formSubmitSubscription) {
+          this.formSubmitSubscription.unsubscribe()
+        }
+
+        if (this.inputSubscription) {
+          this.inputSubscription.unsubscribe()
+        }
       }
 
       render() {
