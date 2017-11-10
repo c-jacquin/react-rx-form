@@ -140,43 +140,6 @@ export const rxForm = function<Props extends RequiredProps>({
       }
 
       /**
-       * return an Observable of the submit event of the form element, map the data to be ready for the onSubmit handler
-       */
-      createFormObservable(): Observable<FormSubmitValues> {
-        return (
-          Observable.fromEvent(this.formElement, 'submit')
-            .map((event: any) => {
-              event.preventDefault()
-              let errorObject = {}
-              let hasError = false
-
-              const formValue = Object.keys(fields).reduce((obj, fieldName) => {
-                if (this.state.formValue[fieldName].error) {
-                  hasError = true
-                  errorObject = {
-                    ...errorObject,
-                    [fieldName]: this.state.formValue[fieldName].error,
-                  }
-                }
-
-                return {
-                  ...obj,
-                  [fieldName]: this.state.formValue[fieldName].value,
-                }
-              }, {})
-
-              if (hasError) {
-                throw errorObject
-              }
-
-              return formValue
-            })
-            // .filter(() => !this.hasError())
-            .do(() => this.setState({ submitted: true }))
-        )
-      }
-
-      /**
        * return an Observable of the given event of the inputs elements of the given types 
        * @param types  the types of input element to include
        * @param eventType the event to subscribe
@@ -325,6 +288,34 @@ export const rxForm = function<Props extends RequiredProps>({
         }
       }
 
+      @autobind
+      handleFormSubmit(event: any) {
+        event.preventDefault()
+        let errorObject = {}
+        let hasError = false
+
+        const formValue = Object.keys(fields).reduce((obj, fieldName) => {
+          if (this.state.formValue[fieldName].error) {
+            hasError = true
+            errorObject = {
+              ...errorObject,
+              [fieldName]: this.state.formValue[fieldName].error,
+            }
+          }
+
+          return {
+            ...obj,
+            [fieldName]: this.state.formValue[fieldName].value,
+          }
+        }, {})
+
+        if (hasError) {
+          throw errorObject
+        }
+
+        return formValue
+      }
+
       componentDidMount() {
         this.inputElements = Array.from(this.formElement.querySelectorAll('input')).filter(element =>
           element.hasAttribute('name'),
@@ -334,7 +325,9 @@ export const rxForm = function<Props extends RequiredProps>({
 
         this.setInitialInputValues()
 
-        this.formSubmit$ = this.createFormObservable()
+        this.formSubmit$ = Observable.fromEvent(this.formElement, 'submit')
+          .map(this.handleFormSubmit)
+          .do(() => this.setState({ submitted: true }))
 
         const textInputs$ = this.createInputObservable(['text', 'email', 'password', 'search'], 'input').map(
           this.handleTextInputChange,
