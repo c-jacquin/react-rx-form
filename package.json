@@ -1,7 +1,6 @@
 {
-  "name": "react-rx-form",
+  "name": "rx-react-form",
   "version": "0.0.0-development",
-  "private": true,
   "author": "Charles Jacquin <charles.jacquin@gmail.com>",
   "main": "dist/index.js",
   "repository": {

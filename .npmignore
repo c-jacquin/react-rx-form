@@ -1,0 +1,4 @@
+src
+docs
+_scripts_
+!src/types.ts
