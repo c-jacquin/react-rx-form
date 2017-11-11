@@ -1,6 +1,6 @@
 module.exports = {
     collectCoverageFrom: [
-        'src/**/*.{ts,tsx}',
+        'src/hoc/**/*.{ts,tsx}',
         '!src/**/*.test.{ts, tsx}',
         '!src/**/*.d.ts',
         '!src/**/types.ts',
@@ -13,6 +13,7 @@ module.exports = {
     ],
     moduleFileExtensions: ["js", "jsx", "json", "ts", "tsx"],
     setupFiles: [
+        'raf/polyfill',        
         './_scripts_/test/test-setup.js'
     ],
     testMatch: ['**/__tests__/*.(ts|tsx|js)'],
