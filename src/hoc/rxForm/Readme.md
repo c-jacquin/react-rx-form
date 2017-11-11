@@ -229,6 +229,61 @@ const onSubmit = (formValue) => {
 <RxSimpleForm foo="john.snow.nightwatch.com" onSubmit={onSubmit} />
 ```
 
+### Custom input
+```jsx
+const { rxForm } = require('./index');
+const { Editor, EditorState } = require('draft-js');
+
+
+class CustomForm extends React.Component {
+    
+    
+    handleDescriptionChange(description) {
+        this.props.setValue({
+            description: {
+                value: description
+            }
+        })
+    }
+
+    constructor(props) {
+        super(props)
+        this.handleDescriptionChange = this.handleDescriptionChange.bind(this)
+    }
+
+    render() {
+        return (
+            <form>
+                <div>
+                    <input name="email" placeholder="modify your email" />
+                </div>
+                <div>
+                    <Editor editorState={this.props.description.value} onChange={this.handleDescriptionChange} />
+                </div>
+                <div>
+                    <button type="submit">Submit form</button>
+                </div>
+            </form>
+        )
+    }
+}
+
+const RxCustomForm = rxForm({
+    fields: {
+        email: {},
+        description: {
+            value: EditorState.createEmpty(),
+            customInput: true
+        }
+    }
+})(CustomForm);
+
+const onSubmit = (formValue) => {
+    console.log('form submitted ===> ', formValue)
+};
+<RxCustomForm onSubmit={onSubmit} />
+```
+
 ### Bad usage
 ```jsx
 const { rxForm } = require('./index');

@@ -153,7 +153,9 @@ export const rxForm = function<Props extends RequiredProps>({
       }
 
       compareFieldsWithInputName() {
-        const fieldsNames = Object.keys(fields)
+        const fieldsNames = Object.keys(fields).filter(fieldName => {
+          return !fields[fieldName].customInput
+        })
         const inputNames = this.inputElements.map(element => element.getAttribute('name'))
 
         const missingInputNames = fieldsNames.filter(fieldName => {
