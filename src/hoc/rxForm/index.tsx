@@ -3,16 +3,8 @@ import { findDOMNode } from 'react-dom'
 import { Subscription, Subject, Observable } from 'rxjs'
 import autobind from 'autobind-decorator'
 
-import {
-  FieldValue,
-  FormValues,
-  FormSubmitValues,
-  RequiredProps,
-  RxFormState,
-  RxFormProps,
-  RxFormParams,
-  FormErrors,
-} from 'types'
+import { FieldValue, FormValues, FormSubmitValues, RequiredProps, RxFormState, RxFormProps, RxFormParams } from 'types'
+import { validateFiledsWithInputName } from './utils/validation'
 
 /**
  * Decorate a react componnent with a form tag as root
@@ -34,14 +26,17 @@ export const rxForm = function<Props extends RequiredProps>({
      * RxForm Higher order component
      */
     class RxForm extends React.Component<Props, RxFormState> {
-      static displayName = `RxForm(${Comp.displayName})`
+      static displayName = `RxForm(${Comp.displayName || Comp.name})`
+
+      static defaultProps = {
+        onError: () => {},
+      }
 
       state: RxFormState = this.initState()
-
       /**
        * An rxjs Observable, tick each time the form state change
        */
-      valueChange$ = valueChangeObs ? new Subject<FormValues>() : null
+      valueChange$ = new Subject<FormValues>()
       /**
        * An rxjs Observable, tick when the form is submitted, call the onSubmit props
        */
@@ -100,8 +95,10 @@ export const rxForm = function<Props extends RequiredProps>({
           )
         }
 
-        if (fields[key].validation) {
-          return fields[key].validation(value, this.state ? this.state.formValue : initEmptyFormValue(), this.props)
+        const field = fields[key]
+
+        if (field.validation) {
+          return field.validation(value, this.state ? this.state.formValue : initEmptyFormValue(), this.props)
         }
       }
 
@@ -120,8 +117,7 @@ export const rxForm = function<Props extends RequiredProps>({
         return fieldKeys.reduce((state, fieldName) => {
           const fieldMeta = fields[fieldName]
           const fieldValue = typeof fieldMeta.value === 'function' ? fieldMeta.value(this.props) : fieldMeta.value || ''
-          const fieldError =
-            typeof fieldMeta.validation === 'function' ? this.getFieldError(fieldValue, fieldName) : null
+          const fieldError = this.getFieldError(fieldValue, fieldName)
           const dirty = !!fieldValue
 
           return {
@@ -144,38 +140,12 @@ export const rxForm = function<Props extends RequiredProps>({
        * @param types  the types of input element to include
        * @param eventType the event to subscribe
        */
-      createInputObservable(types: string[], eventType: string): Observable<any> {
+      createInputObservable(eventType: string, types = ['text', 'email', 'password', 'search']): Observable<any> {
         return new Subject().merge(
           ...this.inputElements
             .filter(element => types.includes(element.type))
             .map(element => Observable.fromEvent(element, eventType)),
         )
-      }
-
-      compareFieldsWithInputName() {
-        const fieldsNames = Object.keys(fields).filter(fieldName => {
-          return !fields[fieldName].customInput
-        })
-        const inputNames = this.inputElements.map(element => element.getAttribute('name'))
-
-        const missingInputNames = fieldsNames.filter(fieldName => {
-          return inputNames.indexOf(fieldName) < 0
-        })
-
-        const missingFieldNames = inputNames.filter(inputName => {
-          if (inputName) {
-            return fieldsNames.indexOf(inputName) < 0
-          }
-          return false
-        })
-
-        if (missingFieldNames.length > 0) {
-          throw new Error(`You forgot some field definitions: ${missingFieldNames.toString()}`)
-        }
-
-        if (missingInputNames.length > 0) {
-          throw new Error(`You forgot some name attribute on input: ${missingInputNames.toString()}`)
-        }
       }
 
       /**
@@ -267,27 +237,13 @@ export const rxForm = function<Props extends RequiredProps>({
 
         formValue[inputName].error = this.getFieldError(formValue[inputName].value, inputName)
 
-        this.setState(
-          {
-            dirty: true,
-            formValue: {
-              ...this.state.formValue,
-              ...formValue,
-            },
+        this.setState({
+          dirty: true,
+          formValue: {
+            ...this.state.formValue,
+            ...formValue,
           },
-          () => {
-            if (this.valueChange$) {
-              this.valueChange$.next(this.state.formValue)
-            }
-          },
-        )
-      }
-
-      @autobind
-      handleFormSubmitSubscribeFailed(error: FormErrors) {
-        if (this.props.onError) {
-          this.props.onError(error)
-        }
+        })
       }
 
       @autobind
@@ -315,6 +271,8 @@ export const rxForm = function<Props extends RequiredProps>({
           throw errorObject
         }
 
+        this.setState({ submitted: true })
+
         return formValue
       }
 
@@ -323,50 +281,33 @@ export const rxForm = function<Props extends RequiredProps>({
           element.hasAttribute('name'),
         )
 
-        this.compareFieldsWithInputName()
+        validateFiledsWithInputName(fields, this.inputElements)
 
         this.setInitialInputValues()
 
-        this.formSubmit$ = Observable.fromEvent(this.formElement, 'submit')
-          .map(this.handleFormSubmit)
-          .do(() => this.setState({ submitted: true }))
+        this.formSubmit$ = Observable.fromEvent(this.formElement, 'submit').map(this.handleFormSubmit)
 
-        const textInputs$ = this.createInputObservable(['text', 'email', 'password', 'search'], 'input').map(
-          this.handleTextInputChange,
-        )
-
-        const checkBox$ = this.createInputObservable(['checkbox'], 'change').map(this.handleCheckboxChange)
-
-        const radioButton$ = this.createInputObservable(['radio'], 'change').map(this.handleRadioButtonChange)
-
-        this.inputSubscription = textInputs$
-          .merge(checkBox$)
-          .merge(radioButton$)
+        this.inputSubscription = this.valueChange$
+          .merge(this.createInputObservable('input').map(this.handleTextInputChange))
+          .merge(this.createInputObservable('change', ['checkbox']).map(this.handleCheckboxChange))
+          .merge(this.createInputObservable('change', ['radio']).map(this.handleRadioButtonChange))
           .debounceTime(debounce)
           .throttleTime(throttle)
           .subscribe(this.handleInputSubscribeSuccess)
 
-        this.formSubmitSubscription = this.formSubmit$.subscribe(
-          this.props.onSubmit,
-          this.handleFormSubmitSubscribeFailed,
-        )
+        this.formSubmitSubscription = this.formSubmit$.subscribe(this.props.onSubmit, this.props.onError)
       }
 
       componentWillUnmount() {
-        if (this.formSubmitSubscription) {
-          this.formSubmitSubscription.unsubscribe()
-        }
-
-        if (this.inputSubscription) {
-          this.inputSubscription.unsubscribe()
-        }
+        this.formSubmitSubscription.unsubscribe()
+        this.inputSubscription.unsubscribe()
       }
 
       render() {
         return (
           <Comp
             ref={this.attachFormElement}
-            valueChange$={this.valueChange$}
+            valueChange$={valueChangeObs ? this.valueChange$ : null}
             formSubmit$={this.formSubmit$}
             setValue={this.setValue}
             valid={!this.hasError()}

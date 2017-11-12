@@ -22,9 +22,9 @@ export interface FieldProp {
 }
 
 export interface Field<Props> {
-  value: FieldValue | FieldValueFunc<Props>
-  validation: (value: FieldValue, state: FormValues, props: Props) => string | undefined
-  customInput: boolean
+  value?: FieldValue | FieldValueFunc<Props>
+  validation?: (value: FieldValue, state: FormValues, props: Props) => string | undefined
+  customInput?: boolean
 }
 
 export interface RequiredProps {

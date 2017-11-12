@@ -2,7 +2,8 @@
     "extends": ["tslint:latest", "@chazzz/tslint-react-config"],
     "rules": {
         "indent": [true, "spaces", 2],
-        "align": false,      
+        "align": false,
+        "no-empty": false,  
         "only-arrow-functions": false,
         "no-implicit-dependencies": false,   
         "member-ordering": {
