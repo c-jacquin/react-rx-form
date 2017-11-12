@@ -1,4 +1,6 @@
 src
 docs
+node_modules
+coverage
 _scripts_
 !src/types.ts

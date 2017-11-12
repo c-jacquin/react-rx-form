@@ -13,6 +13,7 @@ script:
   - npm start validate
 after_success:
   - npm start release
+  - npm start coveralls
 branches:
   only:
     - master

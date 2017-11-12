@@ -13,6 +13,10 @@ module.exports = {
             description: 'commit using conventionnal changelog',
             script: 'git-cz',
         },
+        coveralls: {
+            description: 'upload coverage info to coverall.io',
+            script: 'cat ./coverage/coverage.lcov | ./node_modules/coveralls/bin/coveralls.js',
+        },
         clean: {
             description: 'clean useless temporary directories',
             script: concurrent({
@@ -31,7 +35,7 @@ module.exports = {
         },
         validate: {
             description: 'lint the code, run the test and build',
-            script: concurrent.nps('lint', 'test', 'build'),
+            script: concurrent.nps('lint', 'test.cover', 'build'),
         },
         build: {
             description: 'build the library',
