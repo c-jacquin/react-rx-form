@@ -160,7 +160,20 @@ class SimpleForm extends React.Component {
                 <div>
                     <input name="email" placeholder="modify your email" />
                 </div>
-
+                <label htmlFor="remember">
+                    Remember me ?
+                    <input type="checkbox" name="remember" id="remenber" />
+                </label>
+                <div>
+                    <label htmlFor="men">
+                        Men
+                        <input type="radio" name="gender" value="men" id="men" />
+                    </label>
+                    <label htmlFor="women">
+                        Women
+                        <input type="radio" name="gender" value="women" id="women" />
+                    </label>
+                </div>
                 <div>
                     <button type="submit">Submit form</button>
                 </div>
@@ -172,6 +185,12 @@ class SimpleForm extends React.Component {
 const RxSimpleForm = rxForm({
     fields: {
         email: {},
+        remember: {
+            value: true,
+        },
+        gender: {
+            value: 'women',
+        },
     },
     valueChangeObs: true
 })(SimpleForm);

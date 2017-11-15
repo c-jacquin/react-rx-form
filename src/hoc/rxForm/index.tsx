@@ -41,32 +41,15 @@ export const rxForm = function<Props extends RequiredProps>({
       }
 
       state: RxFormState = this.initState()
-      /**
-       * An rxjs Observable, tick each time the form state change
-       */
+
       valueChange$ = new InputObservable(this.state.formValue)
-      /**
-       * An rxjs Observable, tick if the form is submitted, emit an error if validation fails
-       */
       formSubmit$ = new FormObservable(this.valueChange$)
-      /**
-       * the subscription of the valueChange$ Observable
-       */
+
       valueChangeSubscription = new Subscription()
       formSubmitSubscription = new Subscription()
 
-      /**
-       * The Root element of the decorated component (for now must be a form tag)
-       */
       formElement: HTMLFormElement
-      /**
-       * An array of the inputs tag with a name attribute
-       */
       inputElements: HTMLInputElement[]
-      /**
-       * An array of the select tags with a name attribute
-       */
-      selectElements: HTMLSelectElement[]
 
       /**
        * bind the root element of the decorated component to the class (must be a form tag)
@@ -108,9 +91,21 @@ export const rxForm = function<Props extends RequiredProps>({
        */
       setInitialInputValues() {
         Object.keys(fields).forEach(inputName => {
-          const inputElement = this.inputElements.find(element => element.getAttribute('name') === inputName)
-          if (inputElement) {
-            inputElement.value = this.state.formValue[inputName].value.toString()
+          const inputElements = this.inputElements.filter(element => element.getAttribute('name') === inputName)
+          if (inputElements) {
+            if (inputElements[0].getAttribute('type') === 'checkbox') {
+              inputElements[0].checked = !!this.state.formValue[inputName].value
+            } else if (inputElements[0].getAttribute('type') === 'radio') {
+              inputElements.some(element => {
+                if (element.getAttribute('value') === this.state.formValue[inputName].value) {
+                  element.checked = true
+                  return true
+                }
+                return false
+              })
+            } else {
+              inputElements[0].value = this.state.formValue[inputName].value.toString()
+            }
           }
         })
       }
