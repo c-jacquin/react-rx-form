@@ -5,7 +5,7 @@ export enum RxFormError {
   INPUT = 'You forgot some name attribute on input tag: ',
 }
 
-export const validateFiledsWithInputName = (fields: Fields<any>, inputElements: HTMLInputElement[]) => {
+export const validateFiledsWithInputName = (fields: Fields<any>, inputElements: Element[]) => {
   const fieldsNames = Object.keys(fields).filter(fieldName => {
     return !fields[fieldName].customInput
   })

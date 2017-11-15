@@ -43,11 +43,12 @@ describe('rxForm HoC', () => {
     })(SimpleForm)
     const mounted = mount(<DecoratedComponent onSubmit={onSubmit} />)
 
-    expect(mounted.state().dirty).toBeFalsy()
+    expect(mounted.state().dirty).toEqual(DecoratedComponent.prototype.initState().dirty)
     expect(mounted.state().submitted).toBeFalsy()
+    expect(mounted.state().formValue).toEqual(DecoratedComponent.prototype.initState().formValue)
   })
 
-  it('should call initState and getFieldError at start', () => {
+  it('should call initFormValue and getFieldError at start', () => {
     const DecoratedComponent = rxForm<SimpleFormProps>({
       fields: {
         test: {
@@ -60,11 +61,10 @@ describe('rxForm HoC', () => {
     })(SimpleForm)
     const initStateSpy = jest.spyOn(DecoratedComponent.prototype, 'initState')
     const getFieldErrorSpy = jest.spyOn(DecoratedComponent.prototype, 'getFieldError')
-    const mounted = mount(<DecoratedComponent onSubmit={onSubmit} />)
+    mount(<DecoratedComponent onSubmit={onSubmit} />)
 
     expect(initStateSpy).toHaveBeenCalled()
     expect(getFieldErrorSpy).toHaveBeenCalled()
-    expect(mounted.state()).toEqual(DecoratedComponent.prototype.initState())
   })
 
   it('should map properly the fields to the formValue state', () => {
@@ -102,34 +102,6 @@ describe('rxForm HoC', () => {
     expect(mounted.state().dirty).toBeTruthy()
   })
 
-  describe('data format', () => {
-    it('should properly format data', () => {
-      const DecoratedComponent = rxForm<SimpleFormProps>({
-        fields: {
-          test: {},
-        },
-        valueChangeObs: true,
-      })(SimpleForm)
-      const mounted: any = mount(<DecoratedComponent onSubmit={onSubmit} />)
-      const instance = mounted.instance()
-
-      expect(instance.reduceFieldData('test', 'testValue', false, true)).toEqual({
-        test: {
-          dirty: false,
-          touched: true,
-          value: 'testValue',
-        },
-      })
-      expect(instance.reduceFieldData('test', 'otherValue')).toEqual({
-        test: {
-          dirty: true,
-          touched: true,
-          value: 'otherValue',
-        },
-      })
-    })
-  })
-
   describe('input and form subscription', () => {
     let DecoratedComponent
     let mounted: any
@@ -145,36 +117,24 @@ describe('rxForm HoC', () => {
 
     it('should be defined', () => {
       const instance = mounted.instance()
-      expect(instance.inputSubscription).toBeInstanceOf(Subscription)
+      expect(instance.valueChangeSubscription).toBeInstanceOf(Subscription)
       expect(instance.formSubmitSubscription).toBeInstanceOf(Subscription)
     })
 
     it('should unsubscribe when unmount', () => {
       const instance = mounted.instance()
-      const inputUnsubscribeSpy = jest.spyOn(instance.inputSubscription, 'unsubscribe')
+      const valueChangeUnsubscribeSpy = jest.spyOn(instance.valueChangeSubscription, 'unsubscribe')
       const formUnsubscribeSpy = jest.spyOn(instance.formSubmitSubscription, 'unsubscribe')
 
       mounted.unmount()
 
-      expect(inputUnsubscribeSpy).toHaveBeenCalled()
+      expect(valueChangeUnsubscribeSpy).toHaveBeenCalled()
       expect(formUnsubscribeSpy).toHaveBeenCalled()
     })
   })
 
   describe('Observable', () => {
-    it('should have a formSubmit$ Observable properties', () => {
-      const DecoratedComponent = rxForm({
-        fields: {
-          test: {},
-        },
-      })(SimpleForm)
-      const mounted: any = mount(<DecoratedComponent onSubmit={onSubmit} />)
-      const instance = mounted.instance()
-
-      expect(instance.formSubmit$).toBeInstanceOf(Observable)
-    })
-
-    it('should have a valueChange$ Observable depending on the params', () => {
+    it('should have a valueChange$ Observable', () => {
       const DecoratedComponent = rxForm({
         fields: {
           test: {},
@@ -193,7 +153,6 @@ describe('rxForm HoC', () => {
         fields: {
           test: {},
         },
-        valueChangeObs: true,
       })(SimpleForm)
       const mounted: any = mount(<DecoratedComponent onSubmit={onSubmit} />)
       const instance = mounted.instance()
@@ -212,7 +171,6 @@ describe('rxForm HoC', () => {
     let DecoratedComponent
     let mounted
     let instance: any
-    let reduceFieldDataSpy: any
 
     beforeEach(() => {
       DecoratedComponent = rxForm<SimpleFormProps>({
@@ -227,50 +185,13 @@ describe('rxForm HoC', () => {
       })(SimpleForm)
       mounted = mount(<DecoratedComponent onSubmit={onSubmit} />)
       instance = mounted.instance()
-      reduceFieldDataSpy = jest.spyOn(instance, 'reduceFieldData')
-    })
-
-    it('should call reduceFieldData when checkbox change', () => {
-      instance.handleCheckboxChange({ target: { name: 'test' } })
-      expect(reduceFieldDataSpy).toHaveBeenCalled()
-    })
-
-    it('should call reduceFieldData when radioButton change', () => {
-      instance.handleRadioButtonChange({ target: { name: 'test' } })
-      expect(reduceFieldDataSpy).toHaveBeenCalled()
-    })
-
-    it('should call reduceFieldData when textInput change', () => {
-      instance.handleTextInputChange({ target: { name: 'test' } })
-      expect(reduceFieldDataSpy).toHaveBeenCalled()
     })
 
     it('should update the state when an input emit a new value', () => {
       const setStateSpy = jest.spyOn(instance, 'setState')
-      instance.handleInputSubscribeSuccess({ test: { value: 'test' } })
+      instance.handleValueChangeSuccess({ test: { value: 'test' } })
 
       expect(setStateSpy).toHaveBeenCalled()
-    })
-
-    it('should set the state to submitted => true when the form observable tick', () => {
-      DecoratedComponent = rxForm<SimpleFormProps>({
-        fields: {
-          test: {},
-        },
-        valueChangeObs: true,
-      })(SimpleForm)
-      mounted = mount(<DecoratedComponent onSubmit={onSubmit} />)
-      instance = mounted.instance()
-      const setStateSpy = jest.spyOn(instance, 'setState')
-      instance.handleFormSubmit({ preventDefault: jest.fn() })
-
-      expect(setStateSpy).toHaveBeenCalledWith({ submitted: true })
-    })
-
-    it('should throw en error in the form observable when submit and a field still has error', () => {
-      expect(() => {
-        instance.handleFormSubmit({ preventDefault: jest.fn() })
-      }).toThrowError()
     })
   })
 

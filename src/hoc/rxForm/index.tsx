@@ -1,10 +1,18 @@
 import * as React from 'react'
 import { findDOMNode } from 'react-dom'
-import { Subscription, Subject, Observable } from 'rxjs'
+import { Subscription } from 'rxjs'
 import autobind from 'autobind-decorator'
 
-import { FieldValue, FormValues, FormSubmitValues, RequiredProps, RxFormState, RxFormProps, RxFormParams } from 'types'
+import { FieldValue, FormValues, RequiredProps, RxFormState, RxFormProps, RxFormParams } from 'types'
 import { validateFiledsWithInputName } from './utils/validation'
+import { InputObservable } from './utils/InputObservable'
+import { FormObservable } from './utils/FormObservable'
+
+const initialState = {
+  dirty: false,
+  formValue: {},
+  submitted: false,
+}
 
 /**
  * Decorate a react componnent with a form tag as root
@@ -36,44 +44,75 @@ export const rxForm = function<Props extends RequiredProps>({
       /**
        * An rxjs Observable, tick each time the form state change
        */
-      valueChange$ = new Subject<FormValues>()
+      valueChange$ = new InputObservable(this.state.formValue)
       /**
-       * An rxjs Observable, tick when the form is submitted, call the onSubmit props
+       * An rxjs Observable, tick if the form is submitted, emit an error if validation fails
        */
-      formSubmit$: Observable<FormSubmitValues>
+      formSubmit$ = new FormObservable(this.valueChange$)
       /**
        * the subscription of the valueChange$ Observable
        */
-      inputSubscription: Subscription
-      /**
-       * the subscription of the formSubmit$ Observable
-       */
-      formSubmitSubscription: Subscription
+      valueChangeSubscription = new Subscription()
+      formSubmitSubscription = new Subscription()
 
       /**
        * The Root element of the decorated component (for now must be a form tag)
        */
-      formElement: Element
+      formElement: HTMLFormElement
       /**
        * An array of the inputs tag with a name attribute
        */
       inputElements: HTMLInputElement[]
+      /**
+       * An array of the select tags with a name attribute
+       */
+      selectElements: HTMLSelectElement[]
 
       /**
-       * transform the data from the inputs observable
-       * @param fieldName the name of the input
-       * @param value the value of the input
-       * @param dirty indicate if the field has a value
-       * @param touched indicate if the user already fill something
+       * bind the root element of the decorated component to the class (must be a form tag)
+       * handler for the ref attribute of the decorated component
+       * @param form 
        */
-      reduceFieldData(fieldName: string, value: FieldValue, dirty = true, touched = true): FormValues {
-        return {
-          [fieldName]: {
-            dirty,
-            touched,
-            value,
-          },
-        }
+      @autobind
+      attachFormElement(form: Element) {
+        this.formElement = findDOMNode(form) as HTMLFormElement
+      }
+
+      /**
+       * parse the fields param and set the initial formValue, also determine if the form is dirty
+       */
+      initState() {
+        return Object.keys(fields).reduce((state, fieldName) => {
+          const fieldMeta = fields[fieldName]
+          const fieldValue = typeof fieldMeta.value === 'function' ? fieldMeta.value(this.props) : fieldMeta.value || ''
+          const fieldError = this.getFieldError(fieldValue, fieldName)
+          const dirty = fieldValue !== ''
+
+          return {
+            ...state,
+            dirty: state.dirty || dirty,
+            formValue: {
+              ...state.formValue,
+              [fieldName]: {
+                dirty,
+                error: fieldError,
+                value: fieldValue,
+              },
+            },
+          }
+        }, initialState)
+      }
+
+      /**
+       * set the initial value of input tag if specified in the config
+       */
+      setInitialInputValues() {
+        Object.keys(fields).forEach(inputName => {
+          const inputElement = this.inputElements.find(element => element.getAttribute('name') === inputName)
+          if (inputElement) {
+            inputElement.value = this.state.formValue[inputName].value.toString()
+          }
+        })
       }
 
       /**
@@ -100,52 +139,6 @@ export const rxForm = function<Props extends RequiredProps>({
         if (field.validation) {
           return field.validation(value, this.state ? this.state.formValue : initEmptyFormValue(), this.props)
         }
-      }
-
-      /**
-       * initialize the state of the component
-       */
-      initState(): RxFormState {
-        const fieldKeys = Object.keys(fields)
-
-        const initialFormState = {
-          dirty: false,
-          formValue: {},
-          submitted: false,
-        }
-
-        return fieldKeys.reduce((state, fieldName) => {
-          const fieldMeta = fields[fieldName]
-          const fieldValue = typeof fieldMeta.value === 'function' ? fieldMeta.value(this.props) : fieldMeta.value || ''
-          const fieldError = this.getFieldError(fieldValue, fieldName)
-          const dirty = !!fieldValue
-
-          return {
-            ...state,
-            dirty,
-            formValue: {
-              ...state.formValue,
-              [fieldName]: {
-                dirty,
-                error: fieldError,
-                value: fieldValue,
-              },
-            },
-          }
-        }, initialFormState)
-      }
-
-      /**
-       * return an Observable of the given event of the inputs elements of the given types 
-       * @param types  the types of input element to include
-       * @param eventType the event to subscribe
-       */
-      createInputObservable(eventType: string, types = ['text', 'email', 'password', 'search']): Observable<any> {
-        return new Subject().merge(
-          ...this.inputElements
-            .filter(element => types.includes(element.type))
-            .map(element => Observable.fromEvent(element, eventType)),
-        )
       }
 
       /**
@@ -179,128 +172,65 @@ export const rxForm = function<Props extends RequiredProps>({
       }
 
       /**
-       * bind the root element of the decorated component to the class (must be a form tag)
-       * handler for the ref attribute of the decorated component
-       * @param form 
-       */
-      @autobind
-      attachFormElement(form: Element) {
-        this.formElement = findDOMNode(form)
-      }
-
-      /**
-       * set the initial value of input tag if specified in the config
-       */
-      setInitialInputValues() {
-        Object.keys(fields).forEach(inputName => {
-          const inputElement = this.inputElements.find(element => element.getAttribute('name') === inputName)
-          if (inputElement) {
-            inputElement.value = this.state.formValue[inputName].value.toString()
-          }
-        })
-      }
-
-      /**
-       * return the formatted input data
-       * @param event an input event object
-       */
-      @autobind
-      handleCheckboxChange(event: any) {
-        return this.reduceFieldData(event.target.name, !this.state.formValue[event.target.name].value)
-      }
-
-      /**
-       * return the formatted input data
-       * @param event an input event object
-       */
-      @autobind
-      handleTextInputChange(event: any) {
-        return this.reduceFieldData(event.target.name, event.target.value)
-      }
-
-      /**
-       * return the formatted input data
-       * @param event an input event object
-       */
-      @autobind
-      handleRadioButtonChange(event: any) {
-        return this.reduceFieldData(event.target.name, event.target.value)
-      }
-
-      /**
        * update the state of the form each time an input change and tick the valueChange$ Observable
        * @param formValue the state of the form 
        */
       @autobind
-      handleInputSubscribeSuccess(formValue: FormValues) {
+      handleValueChangeSuccess(formValue: FormValues) {
         const inputName = Object.keys(formValue)[0]
 
-        formValue[inputName].error = this.getFieldError(formValue[inputName].value, inputName)
-
-        this.setState({
-          dirty: true,
-          formValue: {
-            ...this.state.formValue,
-            ...formValue,
-          },
-        })
-      }
-
-      @autobind
-      handleFormSubmit(event: any) {
-        event.preventDefault()
-        let errorObject = {}
-        let hasError = false
-
-        const formValue = Object.keys(fields).reduce((obj, fieldName) => {
-          if (this.state.formValue[fieldName].error) {
-            hasError = true
-            errorObject = {
-              ...errorObject,
-              [fieldName]: this.state.formValue[fieldName].error,
-            }
-          }
-
-          return {
-            ...obj,
-            [fieldName]: this.state.formValue[fieldName].value,
-          }
-        }, {})
-
-        if (hasError) {
-          throw errorObject
+        if (formValue[inputName]) {
+          formValue[inputName].error = this.getFieldError(formValue[inputName].value, inputName)
         }
 
-        this.setState({ submitted: true })
+        this.setState(
+          {
+            dirty: true,
+            formValue: {
+              ...this.state.formValue,
+              ...formValue,
+            },
+          },
+          () => {
+            if (this.valueChange$) {
+              this.valueChange$.next(this.state.formValue)
+            }
+          },
+        )
+      }
 
-        return formValue
+      /**
+       * handler for the filter of the inputs array, check if the input has a name property
+       * @param element - input or select element
+       */
+      handleFilterInputs(element: Element) {
+        return element.hasAttribute('name')
       }
 
       componentDidMount() {
-        this.inputElements = Array.from(this.formElement.querySelectorAll('input')).filter(element =>
-          element.hasAttribute('name'),
-        )
+        this.inputElements = Array.from(this.formElement.querySelectorAll('input')).filter(this.handleFilterInputs)
 
         validateFiledsWithInputName(fields, this.inputElements)
 
         this.setInitialInputValues()
 
-        this.formSubmit$ = Observable.fromEvent(this.formElement, 'submit').map(this.handleFormSubmit)
+        this.valueChange$.addInputs(this.inputElements)
 
-        this.inputSubscription = this.valueChange$
-          .merge(this.createInputObservable('input').map(this.handleTextInputChange))
-          .merge(this.createInputObservable('change', ['checkbox']).map(this.handleCheckboxChange))
-          .merge(this.createInputObservable('change', ['radio']).map(this.handleRadioButtonChange))
+        this.valueChangeSubscription = this.valueChange$
           .debounceTime(debounce)
           .throttleTime(throttle)
-          .subscribe(this.handleInputSubscribeSuccess)
+          .subscribe(this.handleValueChangeSuccess)
 
-        this.formSubmitSubscription = this.formSubmit$.subscribe(this.props.onSubmit, this.props.onError)
+        this.formSubmitSubscription = this.formSubmit$
+          .init(this.formElement)
+          .do(() => this.setState({ submitted: true }))
+          .subscribe(this.props.onSubmit, this.props.onError)
       }
 
       componentWillUnmount() {
         this.formSubmitSubscription.unsubscribe()
-        this.inputSubscription.unsubscribe()
+        this.valueChangeSubscription.unsubscribe()
+        this.valueChange$.unsubscribe()
       }
 
       render() {
@@ -308,7 +238,6 @@ export const rxForm = function<Props extends RequiredProps>({
           <Comp
             ref={this.attachFormElement}
             valueChange$={valueChangeObs ? this.valueChange$ : null}
-            formSubmit$={this.formSubmit$}
             setValue={this.setValue}
             valid={!this.hasError()}
             submitted={this.state.submitted}

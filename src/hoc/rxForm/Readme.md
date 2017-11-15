@@ -148,9 +148,10 @@ const { rxForm } = require('./index');
 
 class SimpleForm extends React.Component {
     componentDidMount() {
+        console.log(this.props)
         this.props.valueChange$.subscribe((formValues) => {
             console.log('Form values ====>', formValues)
-        })
+        }, (err) => console.error(err))
     }
 
     render() {
@@ -159,6 +160,7 @@ class SimpleForm extends React.Component {
                 <div>
                     <input name="email" placeholder="modify your email" />
                 </div>
+
                 <div>
                     <button type="submit">Submit form</button>
                 </div>
@@ -284,15 +286,11 @@ const onSubmit = (formValue) => {
 <RxCustomForm onSubmit={onSubmit} />
 ```
 
-### Bad usage
+<!-- ### Bad usage
 ```jsx
 const { rxForm } = require('./index');
-
-class SimpleForm extends React.Component {
-    componentDidCatch(error) {
-        console.log('error catched')
-    }
-
+console.error = () => {};
+class BadForm extends React.Component {
     render() {
         return (
             <form>
@@ -307,14 +305,14 @@ class SimpleForm extends React.Component {
     }
 }
 
-const RxSimpleForm = rxForm({
+const RxBadForm = rxForm({
     fields: {
         email: {}
     }
-})(SimpleForm);
+})(BadForm);
 
 const onSubmit = (formValue) => {
     console.log('form submitted ===> ', formValue)
 };
-<RxSimpleForm onSubmit={onSubmit} />
-```
+<RxBadForm onSubmit={onSubmit} />
+``` -->

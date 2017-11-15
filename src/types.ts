@@ -58,3 +58,15 @@ export interface FormSubmitValues {
 export interface FormErrors {
   [key: string]: string
 }
+
+// Event
+
+export interface InputEventTarget {
+  name: string
+  value: FieldValue
+  checked?: boolean
+}
+
+export interface InputEvent {
+  target: InputEventTarget
+}
