@@ -82,3 +82,9 @@ class SimpleForm extends React.Component<Props, any> {
 
 <SimpleForm name="john snow" onSubmit={...} onError={...} />
 ```
+## RoadMap
+
+- [ ] select support
+- [ ] asynchonous validation
+- [ ] wizard (form with step)
+- [ ] Wrapper component for input
