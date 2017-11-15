@@ -1,5 +1,6 @@
 import { BehaviorSubject, Observable, Subscription } from 'rxjs'
-import { FieldValue, InputEvent, FormValues } from '../../../types'
+import { FieldValue, InputEvent, FormValues } from '../types'
+import { createInputObservable } from 'observable/factory'
 import autobind from 'autobind-decorator'
 
 export interface InputObservableParams {
@@ -24,7 +25,7 @@ export class InputObservable extends BehaviorSubject<FormValues> {
   text$: Observable<FormValues>
   radio$: Observable<FormValues>
   checkbox$: Observable<FormValues>
-  subscription: Subscription
+  subscriptions: Subscription[] = []
 
   constructor(
     {
@@ -48,9 +49,14 @@ export class InputObservable extends BehaviorSubject<FormValues> {
     }
   }
 
-  unsubscribe() {
+  /**
+   * unsubscribe to all the subscribed Observable
+   */
+  unsubscribe(): void {
     super.unsubscribe()
-    this.subscription.unsubscribe()
+    this.subscriptions.forEach(subscription => {
+      subscription.unsubscribe()
+    })
   }
 
   /**
@@ -88,35 +94,37 @@ export class InputObservable extends BehaviorSubject<FormValues> {
     return this.reduceField(event.target.name, !!event.target.checked)
   }
 
-  /**
-   * create an Observable of the given events of the given inputs of the given types
-   * @param elements - inputs elements
-   * @param type - input type to filter ('checkbox, text, password ...')
-   * @param event - the event to listen (change, input ...)
-   */
-  createInputObservable(elements: HTMLInputElement[], types: string[], event = 'change'): Observable<InputEvent | any> {
-    return Observable.merge(
-      ...elements
-        .filter(element => types.indexOf(element.type) !== -1)
-        .map(element => Observable.fromEvent(element, event)),
-    )
+  @autobind
+  handleSubscribe(formValues: FormValues) {
+    this.next({
+      ...this.getValue(),
+      ...formValues,
+    })
   }
 
   /**
    * add new observable inputs to the InputObservable
    * @param inputElements - the inputElement to add
    */
-  addInputs(inputElements: HTMLInputElement[]) {
-    const text$ = this.createInputObservable(inputElements, InputObservable.TEXT_INPUT, this.textEvent).map(
-      this.standardInputFormatter,
-    )
-    const radio$ = this.createInputObservable(inputElements, InputObservable.RADIO_INPUT, this.radioEvent).map(
-      this.standardInputFormatter,
-    )
-    const checkbox$ = this.createInputObservable(inputElements, InputObservable.CHECKBOX_INPUT, this.checkboxEvent).map(
-      this.checkboxInputFormatter,
-    )
+  addInputs(inputElements: HTMLInputElement[]): void {
+    const text$ = createInputObservable({
+      elements: inputElements,
+      event: this.textEvent,
+      types: InputObservable.TEXT_INPUT,
+    }).map(this.standardInputFormatter)
 
-    this.subscription = Observable.merge(text$, radio$, checkbox$).subscribe(this.next.bind(this))
+    const radio$ = createInputObservable({
+      elements: inputElements,
+      event: this.radioEvent,
+      types: InputObservable.RADIO_INPUT,
+    }).map(this.standardInputFormatter)
+
+    const checkbox$ = createInputObservable({
+      elements: inputElements,
+      event: this.checkboxEvent,
+      types: InputObservable.CHECKBOX_INPUT,
+    }).map(this.checkboxInputFormatter)
+
+    this.subscriptions.push(Observable.merge(text$, radio$, checkbox$).subscribe(this.handleSubscribe))
   }
 }

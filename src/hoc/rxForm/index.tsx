@@ -5,8 +5,8 @@ import autobind from 'autobind-decorator'
 
 import { FieldValue, FormValues, RequiredProps, RxFormState, RxFormProps, RxFormParams } from 'types'
 import { validateFiledsWithInputName } from './utils/validation'
-import { InputObservable } from './utils/InputObservable'
-import { FormObservable } from './utils/FormObservable'
+import { InputObservable } from 'observable/InputObservable'
+import { FormObservable } from 'observable/FormObservable'
 
 const initialState = {
   dirty: false,
@@ -93,7 +93,7 @@ export const rxForm = function<Props extends RequiredProps>({
       setInitialInputValues() {
         Object.keys(fields).forEach(inputName => {
           const inputElements = this.inputElements.filter(element => element.getAttribute('name') === inputName)
-          if (inputElements) {
+          if (inputElements[0]) {
             if (inputElements[0].getAttribute('type') === 'checkbox') {
               inputElements[0].checked = !!this.state.formValue[inputName].value
             } else if (inputElements[0].getAttribute('type') === 'radio') {

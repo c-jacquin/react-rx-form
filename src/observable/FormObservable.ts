@@ -1,5 +1,5 @@
 import { Subject, Observable, BehaviorSubject } from 'rxjs'
-import { FormSubmitValues, FormValues } from '../../../types'
+import { FormSubmitValues, FormValues } from '../types'
 import autobind from 'autobind-decorator'
 
 export class FormObservable extends Subject<FormSubmitValues> {
@@ -11,6 +11,7 @@ export class FormObservable extends Subject<FormSubmitValues> {
     super()
 
     this.input$ = input$
+
     if (formElement) {
       this.init(formElement)
     }

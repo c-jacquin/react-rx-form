@@ -71,3 +71,16 @@ export interface InputEventTarget {
 export interface InputEvent {
   target: InputEventTarget
 }
+
+export interface SelectObsParams {
+  elements: HTMLSelectElement[]
+  event: string
+}
+
+export interface InputObsParams {
+  elements: HTMLInputElement[]
+  types: string[]
+  event?: string
+}
+
+export type ObsFactory<P> = (params: P) => Observable<InputEvent | any>
