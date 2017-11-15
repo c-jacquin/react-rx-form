@@ -134,16 +134,18 @@ describe('rxForm HoC', () => {
   })
 
   describe('Observable', () => {
-    it('should have a valueChange$ Observable', () => {
+    it('should have a valueChange$ and a formSubmit$ Observable', () => {
       const DecoratedComponent = rxForm({
         fields: {
           test: {},
         },
+        formSubmitObs: true,
         valueChangeObs: true,
       })(SimpleForm)
       const mounted: any = mount(<DecoratedComponent onSubmit={onSubmit} />)
 
       expect(mounted.instance().valueChange$).toBeInstanceOf(Observable)
+      expect(mounted.instance().formSubmit$).toBeInstanceOf(Observable)
     })
   })
 

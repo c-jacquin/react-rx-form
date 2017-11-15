@@ -1,4 +1,4 @@
-import { Observable, Subject } from 'rxjs'
+import { Observable } from 'rxjs'
 
 export type FieldValue = string | number | boolean
 export type FieldValueFunc<Props> = (props: Props) => FieldValue
@@ -6,6 +6,7 @@ export type FieldValueFunc<Props> = (props: Props) => FieldValue
 export interface RxFormParams<Props> {
   fields: Fields<Props>
   valueChangeObs?: boolean
+  formSubmitObs?: boolean
   debounce?: number
   throttle?: number
 }
@@ -34,8 +35,8 @@ export interface RequiredProps {
 
 export interface RxFormProps {
   ref?: any
-  valueChange$?: Subject<FormValues> | null
-  formSubmit$?: Observable<FormSubmitValues>
+  valueChange$?: Observable<FormValues> | null
+  formSubmit$?: Observable<FormSubmitValues> | null
   setValue?: (state: any) => void
   valid?: boolean
   submitted?: boolean
