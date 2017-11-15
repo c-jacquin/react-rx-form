@@ -43,7 +43,9 @@ export const rxForm = function<Props extends RequiredProps>({
 
       state: RxFormState = this.initState()
 
-      valueChange$ = new InputObservable(this.state.formValue)
+      valueChange$ = new InputObservable({
+        initialValue: this.state.formValue,
+      })
       formSubmit$ = new FormObservable(this.valueChange$)
 
       valueChangeSubscription = new Subscription()
@@ -51,6 +53,7 @@ export const rxForm = function<Props extends RequiredProps>({
 
       formElement: HTMLFormElement
       inputElements: HTMLInputElement[]
+      selectElements: HTMLSelectElement[]
 
       /**
        * bind the root element of the decorated component to the class (must be a form tag)
@@ -93,6 +96,8 @@ export const rxForm = function<Props extends RequiredProps>({
       setInitialInputValues() {
         Object.keys(fields).forEach(inputName => {
           const inputElements = this.inputElements.filter(element => element.getAttribute('name') === inputName)
+          const selectElements = this.selectElements.filter(element => element.getAttribute('name') === inputName)
+
           if (inputElements[0]) {
             if (inputElements[0].getAttribute('type') === 'checkbox') {
               inputElements[0].checked = !!this.state.formValue[inputName].value
@@ -107,6 +112,12 @@ export const rxForm = function<Props extends RequiredProps>({
             } else {
               inputElements[0].value = this.state.formValue[inputName].value.toString()
             }
+          }
+
+          if (selectElements[0]) {
+            Array.from(selectElements[0].querySelectorAll('option')).forEach(optionElement => {
+              optionElement.selected = optionElement.value === this.state.formValue[inputName].value
+            })
           }
         })
       }
@@ -205,12 +216,13 @@ export const rxForm = function<Props extends RequiredProps>({
 
       componentDidMount() {
         this.inputElements = Array.from(this.formElement.querySelectorAll('input')).filter(this.handleFilterInputs)
+        this.selectElements = Array.from(this.formElement.querySelectorAll('select')).filter(this.handleFilterInputs)
 
-        validateFiledsWithInputName(fields, this.inputElements)
+        validateFiledsWithInputName(fields, [...this.inputElements, ...this.selectElements])
 
         this.setInitialInputValues()
 
-        this.valueChange$.addInputs(this.inputElements)
+        this.valueChange$.addInputs(this.inputElements, this.selectElements)
 
         this.valueChangeSubscription = this.valueChange$
           .debounceTime(debounce)

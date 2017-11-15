@@ -1,6 +1,6 @@
 import { BehaviorSubject, Observable, Subscription } from 'rxjs'
 import { FieldValue, InputEvent, FormValues } from '../types'
-import { createInputObservable } from 'observable/factory'
+import { createInputObservable, createSelectObservable } from 'observable/factory'
 import autobind from 'autobind-decorator'
 
 export interface InputObservableParams {
@@ -9,6 +9,7 @@ export interface InputObservableParams {
   radioEvent?: string
   selectEvent?: string
   initialValue?: FormValues
+  selectElements?: HTMLSelectElement[]
   inputElements?: HTMLInputElement[]
 }
 
@@ -27,16 +28,15 @@ export class InputObservable extends BehaviorSubject<FormValues> {
   checkbox$: Observable<FormValues>
   subscriptions: Subscription[] = []
 
-  constructor(
-    {
-      inputElements,
-      initialValue = {},
-      checkboxEvent = 'change',
-      textEvent = 'input',
-      radioEvent = 'change',
-      selectEvent = 'change',
-    }: InputObservableParams = {},
-  ) {
+  constructor({
+    inputElements = [],
+    selectElements = [],
+    initialValue = {},
+    checkboxEvent = 'change',
+    textEvent = 'input',
+    radioEvent = 'change',
+    selectEvent = 'change',
+  }: InputObservableParams) {
     super(initialValue)
 
     this.checkboxEvent = checkboxEvent
@@ -44,8 +44,8 @@ export class InputObservable extends BehaviorSubject<FormValues> {
     this.radioEvent = radioEvent
     this.selectEvent = selectEvent
 
-    if (inputElements) {
-      this.addInputs(inputElements)
+    if (inputElements.length > 0 || selectElements.length > 0) {
+      this.addInputs(inputElements, selectElements)
     }
   }
 
@@ -106,7 +106,7 @@ export class InputObservable extends BehaviorSubject<FormValues> {
    * add new observable inputs to the InputObservable
    * @param inputElements - the inputElement to add
    */
-  addInputs(inputElements: HTMLInputElement[]): void {
+  addInputs(inputElements: HTMLInputElement[], selectElements: HTMLSelectElement[] = []): void {
     const text$ = createInputObservable({
       elements: inputElements,
       event: this.textEvent,
@@ -125,6 +125,8 @@ export class InputObservable extends BehaviorSubject<FormValues> {
       types: InputObservable.CHECKBOX_INPUT,
     }).map(this.checkboxInputFormatter)
 
-    this.subscriptions.push(Observable.merge(text$, radio$, checkbox$).subscribe(this.handleSubscribe))
+    const select$ = createSelectObservable({ elements: selectElements }).map(this.standardInputFormatter)
+
+    this.subscriptions.push(Observable.merge(text$, radio$, checkbox$, select$).subscribe(this.handleSubscribe))
   }
 }

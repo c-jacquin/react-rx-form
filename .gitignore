@@ -56,3 +56,4 @@ fastlane/screenshots
 
 # jest
 coverage
+.temp

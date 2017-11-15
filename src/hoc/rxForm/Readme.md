@@ -175,6 +175,12 @@ class SimpleForm extends React.Component {
                     </label>
                 </div>
                 <div>
+                    <select name="country">
+                        <option value="fr">France</option>
+                        <option value="gl">Groland</option>
+                    </select>
+                </div>
+                <div>
                     <button type="submit">Submit form</button>
                 </div>
             </form>
@@ -191,6 +197,9 @@ const RxSimpleForm = rxForm({
         gender: {
             value: 'women',
         },
+        country: {
+            value: 'gl',
+        }
     },
     valueChangeObs: true
 })(SimpleForm);

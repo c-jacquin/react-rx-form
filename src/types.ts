@@ -74,7 +74,7 @@ export interface InputEvent {
 
 export interface SelectObsParams {
   elements: HTMLSelectElement[]
-  event: string
+  event?: string
 }
 
 export interface InputObsParams {
