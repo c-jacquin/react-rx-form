@@ -1,6 +1,7 @@
 import { Fields } from '../../../types'
 
 export enum RxFormError {
+  TYPE = 'must be of type number',
   FIELD = 'You forgot some fields definitions: ',
   INPUT = 'You forgot some name attribute on input tag: ',
 }

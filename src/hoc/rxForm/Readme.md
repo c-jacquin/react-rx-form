@@ -181,6 +181,15 @@ class SimpleForm extends React.Component {
                     </select>
                 </div>
                 <div>
+                    <input type="date" name="date" />
+                </div>
+                <div>
+                    <input type="range" name="age" min="7" max="77" />
+                </div>
+                <div>
+                    <input type="number" name="items" />
+                </div>
+                <div>
                     <button type="submit">Submit form</button>
                 </div>
             </form>
@@ -199,6 +208,15 @@ const RxSimpleForm = rxForm({
         },
         country: {
             value: 'gl',
+        },
+        date: {
+            value: new Date()
+        },
+        age: {
+            value: 60
+        },
+        items: {
+            value: 45
         }
     },
     valueChangeObs: true

@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs'
 import autobind from 'autobind-decorator'
 
 import { FieldValue, FormValues, RequiredProps, RxFormState, RxFormProps, RxFormParams } from 'types'
-import { validateFiledsWithInputName } from './utils/validation'
+import { validateFiledsWithInputName, RxFormError } from './utils/validation'
 import { InputObservable } from 'observable/InputObservable'
 import { FormObservable } from 'observable/FormObservable'
 
@@ -97,27 +97,68 @@ export const rxForm = function<Props extends RequiredProps>({
         Object.keys(fields).forEach(inputName => {
           const inputElements = this.inputElements.filter(element => element.getAttribute('name') === inputName)
           const selectElements = this.selectElements.filter(element => element.getAttribute('name') === inputName)
+          const fieldValue = this.state.formValue[inputName].value
 
-          if (inputElements[0]) {
-            if (inputElements[0].getAttribute('type') === 'checkbox') {
-              inputElements[0].checked = !!this.state.formValue[inputName].value
-            } else if (inputElements[0].getAttribute('type') === 'radio') {
-              inputElements.some(element => {
-                if (element.getAttribute('value') === this.state.formValue[inputName].value) {
-                  element.checked = true
-                  return true
+          if (inputElements[0] && fieldValue) {
+            switch (inputElements[0].getAttribute('type')) {
+              case 'checkbox':
+                if (typeof fieldValue === 'boolean') {
+                  inputElements[0].checked = !!fieldValue
+                } else {
+                  throw new Error(`${inputName} ${RxFormError.TYPE} boolean`)
                 }
-                return false
-              })
-            } else {
-              inputElements[0].value = this.state.formValue[inputName].value.toString()
+                break
+
+              case 'radio':
+                if (typeof fieldValue === 'string') {
+                  inputElements.some(element => {
+                    if (element.getAttribute('value') === fieldValue) {
+                      element.checked = true
+                      return true
+                    }
+                    return false
+                  })
+                } else {
+                  throw new Error(`${inputName} ${RxFormError.TYPE} string`)
+                }
+                break
+
+              case 'date':
+                if (fieldValue instanceof Date) {
+                  inputElements[0].value = new Date(fieldValue.toString()).toISOString().substr(0, 10)
+                } else {
+                  throw new Error(`${inputName} ${RxFormError.TYPE} Date`)
+                }
+                break
+
+              case 'range':
+              case 'number':
+                try {
+                  parseInt(fieldValue as string, 10)
+                  inputElements[0].value = fieldValue.toString()
+                } catch (err) {
+                  throw new Error(`${inputName} ${RxFormError.TYPE} number`)
+                }
+                break
+
+              default:
+                if (typeof fieldValue === 'string') {
+                  inputElements[0].value = fieldValue.toString()
+                } else {
+                  throw new Error(`${inputName} ${RxFormError.TYPE} string`)
+                }
+                break
             }
           }
 
-          if (selectElements[0]) {
-            Array.from(selectElements[0].querySelectorAll('option')).forEach(optionElement => {
-              optionElement.selected = optionElement.value === this.state.formValue[inputName].value
-            })
+          if (selectElements[0] && fieldValue) {
+            if (typeof fieldValue === 'string') {
+              Array.from(selectElements[0].querySelectorAll('option')).forEach(optionElement => {
+                optionElement.selected = optionElement.value === fieldValue
+              })
+            } else {
+              throw new Error(`${inputName} ${RxFormError.TYPE} string`)
+            }
           }
         })
       }

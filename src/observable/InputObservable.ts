@@ -14,7 +14,7 @@ export interface InputObservableParams {
 }
 
 export class InputObservable extends BehaviorSubject<FormValues> {
-  static TEXT_INPUT = ['text', 'search', 'email', 'password']
+  static TEXT_INPUT = ['text', 'search', 'email', 'password', 'date', 'range', 'number']
   static RADIO_INPUT = ['radio']
   static CHECKBOX_INPUT = ['checkbox']
 
@@ -66,12 +66,28 @@ export class InputObservable extends BehaviorSubject<FormValues> {
    * @param dirty - indicate if the field has a value
    * @param touched - indicate if the user already fill something
    */
-  reduceField(fieldName: string, value: FieldValue, dirty = true, touched = true): FormValues {
+  reduceField(fieldName: string, value: FieldValue, type: string, dirty = true, touched = true): FormValues {
+    let formattedValue
+
+    switch (type) {
+      case 'date':
+        formattedValue = new Date(value as string)
+        break
+
+      case 'range':
+      case 'number':
+        formattedValue = parseInt(value as string, 10)
+        break
+
+      default:
+        formattedValue = value
+    }
+
     return {
       [fieldName]: {
         dirty,
         touched,
-        value,
+        value: formattedValue,
       },
     }
   }
@@ -82,7 +98,7 @@ export class InputObservable extends BehaviorSubject<FormValues> {
    */
   @autobind
   standardInputFormatter(event: InputEvent | any): FormValues {
-    return this.reduceField(event.target.name, event.target.value)
+    return this.reduceField(event.target.name, event.target.value, event.target.type)
   }
 
   /**
@@ -91,7 +107,7 @@ export class InputObservable extends BehaviorSubject<FormValues> {
    */
   @autobind
   checkboxInputFormatter(event: InputEvent | any): FormValues {
-    return this.reduceField(event.target.name, !!event.target.checked)
+    return this.reduceField(event.target.name, !!event.target.checked, event.target.type)
   }
 
   @autobind

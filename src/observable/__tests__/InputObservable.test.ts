@@ -35,20 +35,20 @@ describe('InputObservable class', () => {
 
     it('should call reduceField when format standard input', () => {
       const obs$ = new InputObservable({ inputElements })
-      obs$.standardInputFormatter({ target: { name: 'test', value: 'test' } })
+      obs$.standardInputFormatter({ target: { name: 'test', value: 'test', type: 'text' } })
       expect(reduceFieldSpy).toHaveBeenCalledWith('test', 'test')
     })
 
     it('should call reduceField when format checkbox input', () => {
       const obs$ = new InputObservable({ inputElements })
-      obs$.checkboxInputFormatter({ target: { name: 'test', value: 'test', checked: true } })
+      obs$.checkboxInputFormatter({ target: { name: 'test', value: 'test', checked: true, type: 'checkbox' } })
       expect(reduceFieldSpy).toHaveBeenCalledWith('test', true)
     })
   })
 
   describe('field reducer', () => {
     it('should properly format data', () => {
-      expect(InputObservable.prototype.reduceField('test', 'test')).toEqual({
+      expect(InputObservable.prototype.reduceField('test', 'test', 'test')).toEqual({
         test: {
           dirty: true,
           touched: true,

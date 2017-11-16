@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs'
 
-export type FieldValue = string | number | boolean
+export type FieldValue = string | number | boolean | Date
 export type FieldValueFunc<Props> = (props: Props) => FieldValue
 
 export interface RxFormParams<Props> {
