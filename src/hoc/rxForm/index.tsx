@@ -26,7 +26,6 @@ const initialState = {
 export const rxForm = function<Props extends RequiredProps>({
   fields,
   valueChangeObs,
-  formSubmitObs,
   debounce = 300,
   throttle = 0,
 }: RxFormParams<Props>) {
@@ -231,20 +230,13 @@ export const rxForm = function<Props extends RequiredProps>({
           formValue[inputName].error = this.getFieldError(formValue[inputName].value, inputName)
         }
 
-        this.setState(
-          {
-            dirty: true,
-            formValue: {
-              ...this.state.formValue,
-              ...formValue,
-            },
+        this.setState({
+          dirty: true,
+          formValue: {
+            ...this.state.formValue,
+            ...formValue,
           },
-          () => {
-            if (this.valueChange$) {
-              this.valueChange$.next(this.state.formValue)
-            }
-          },
-        )
+        })
       }
 
       /**
@@ -286,7 +278,6 @@ export const rxForm = function<Props extends RequiredProps>({
         return (
           <Comp
             ref={this.attachFormElement}
-            formSubmit$={formSubmitObs ? this.formSubmit$ : null}
             valueChange$={valueChangeObs ? this.valueChange$ : null}
             setValue={this.setValue}
             valid={!this.hasError()}

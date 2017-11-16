@@ -6,7 +6,6 @@ export type FieldValueFunc<Props> = (props: Props) => FieldValue
 export interface RxFormParams<Props> {
   fields: Fields<Props>
   valueChangeObs?: boolean
-  formSubmitObs?: boolean
   debounce?: number
   throttle?: number
 }

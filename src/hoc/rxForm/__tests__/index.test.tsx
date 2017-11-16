@@ -139,7 +139,6 @@ describe('rxForm HoC', () => {
         fields: {
           test: {},
         },
-        formSubmitObs: true,
         valueChangeObs: true,
       })(SimpleForm)
       const mounted: any = mount(<DecoratedComponent onSubmit={onSubmit} />)
