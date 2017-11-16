@@ -58,31 +58,3 @@ describe('InputObservable class', () => {
     })
   })
 })
-
-//   describe('data format', () => {
-//   it('should properly format data', () => {
-//     const DecoratedComponent = rxForm<SimpleFormProps>({
-//       fields: {
-//         test: {},
-//       },
-//       valueChangeObs: true,
-//     })(SimpleForm)
-//     const mounted: any = mount(<DecoratedComponent onSubmit={onSubmit} />)
-//     const instance = mounted.instance()
-
-//     expect(instance.reduceFieldData('test', 'testValue', false, true)).toEqual({
-//       test: {
-//         dirty: false,
-//         touched: true,
-//         value: 'testValue',
-//       },
-//     })
-//     expect(instance.reduceFieldData('test', 'otherValue')).toEqual({
-//       test: {
-//         dirty: true,
-//         touched: true,
-//         value: 'otherValue',
-//       },
-//     })
-//   })
-// })
