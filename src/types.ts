@@ -18,12 +18,14 @@ export interface FieldProp {
   dirty?: boolean
   error?: string
   touched?: boolean
+  pending?: boolean
   value: FieldValue
 }
 
 export interface Field<Props> {
   value?: FieldValue | FieldValueFunc<Props>
   validation?: (value: FieldValue, state: FormValues, props: Props) => string | undefined
+  validation$?: (value: FieldValue, state: FormValues, props: Props) => Observable<string | undefined>
   customInput?: boolean
 }
 
