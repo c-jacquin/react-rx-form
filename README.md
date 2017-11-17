@@ -84,7 +84,7 @@ class SimpleForm extends React.Component<Props, any> {
 ```
 ## RoadMap
 
-- [ ] select support
-- [ ] asynchonous validation
+- [x] select support
+- [x] asynchonous validation
 - [ ] wizard (form with step)
 - [ ] Wrapper component for input
