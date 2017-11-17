@@ -3,7 +3,7 @@ import { findDOMNode } from 'react-dom'
 import { Subscription } from 'rxjs'
 import autobind from 'autobind-decorator'
 
-import { FieldValue, FormValues, RequiredProps, RxFormState, RxFormProps, RxFormParams } from 'types'
+import { FormValues, RequiredProps, RxFormState, RxFormProps, RxFormParams } from 'types'
 import { validateFiledsWithInputName, RxFormError } from './utils/validation'
 import { InputObservable } from 'observable/InputObservable'
 import { FormObservable } from 'observable/FormObservable'
@@ -43,6 +43,7 @@ export const rxForm = function<Props extends RequiredProps>({
       state: RxFormState = this.initState()
 
       valueChange$ = new InputObservable({
+        fields,
         initialValue: this.state.formValue,
       })
       formSubmit$ = new FormObservable(this.valueChange$)
@@ -65,14 +66,32 @@ export const rxForm = function<Props extends RequiredProps>({
       }
 
       /**
+       * used to validate the inputs during the first render
+       * @see initState
+       */
+      initSimplifiedFormValue() {
+        return Object.keys(fields).reduce((acc, fieldName) => {
+          const fieldMeta = fields[fieldName]
+          return {
+            ...acc,
+            [fieldName]: typeof fieldMeta.value === 'function' ? fieldMeta.value(this.props) : fieldMeta.value || '',
+          }
+        }, {})
+      }
+
+      /**
        * parse the fields param and set the initial formValue, also determine if the form is dirty
        */
       initState() {
         return Object.keys(fields).reduce((state, fieldName) => {
           const fieldMeta = fields[fieldName]
           const fieldValue = typeof fieldMeta.value === 'function' ? fieldMeta.value(this.props) : fieldMeta.value || ''
-          const fieldError = this.getFieldError(fieldValue, fieldName)
           const dirty = fieldValue !== ''
+          let fieldError
+
+          if (fieldMeta.validation) {
+            fieldError = fieldMeta.validation(fieldValue, this.initSimplifiedFormValue(), this.props)
+          }
 
           return {
             ...state,
@@ -163,32 +182,6 @@ export const rxForm = function<Props extends RequiredProps>({
       }
 
       /**
-       * Determine if a field has an error and return it
-       * @param value the value of the input
-       * @param key the name of the input
-       */
-      getFieldError(value: FieldValue, key: string): string | undefined {
-        /**
-         * if the state is not defined yet, we build a fake one for the validation functions
-         */
-        const initEmptyFormValue = () => {
-          return Object.keys(fields).reduce(
-            (acc, fieldName) => ({
-              ...acc,
-              [fieldName]: {},
-            }),
-            {},
-          )
-        }
-
-        const field = fields[key]
-
-        if (field.validation) {
-          return field.validation(value, this.state ? this.state.formValue : initEmptyFormValue(), this.props)
-        }
-      }
-
-      /**
        * Check if the form has error
        */
       hasError(): boolean {
@@ -224,18 +217,9 @@ export const rxForm = function<Props extends RequiredProps>({
        */
       @autobind
       handleValueChangeSuccess(formValue: FormValues) {
-        const inputName = Object.keys(formValue)[0]
-
-        if (formValue[inputName]) {
-          formValue[inputName].error = this.getFieldError(formValue[inputName].value, inputName)
-        }
-
         this.setState({
           dirty: true,
-          formValue: {
-            ...this.state.formValue,
-            ...formValue,
-          },
+          formValue,
         })
       }
 

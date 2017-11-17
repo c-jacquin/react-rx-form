@@ -48,7 +48,7 @@ describe('rxForm HoC', () => {
     expect(mounted.state().formValue).toEqual(DecoratedComponent.prototype.initState().formValue)
   })
 
-  it('should call initFormValue and getFieldError at start', () => {
+  it('should call initFormValue at start', () => {
     const DecoratedComponent = rxForm<SimpleFormProps>({
       fields: {
         test: {
@@ -60,11 +60,9 @@ describe('rxForm HoC', () => {
       },
     })(SimpleForm)
     const initStateSpy = jest.spyOn(DecoratedComponent.prototype, 'initState')
-    const getFieldErrorSpy = jest.spyOn(DecoratedComponent.prototype, 'getFieldError')
     mount(<DecoratedComponent onSubmit={onSubmit} />)
 
     expect(initStateSpy).toHaveBeenCalled()
-    expect(getFieldErrorSpy).toHaveBeenCalled()
   })
 
   it('should map properly the fields to the formValue state', () => {

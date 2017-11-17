@@ -123,11 +123,63 @@ const RxSimpleForm = rxForm({
         pass: {},
         repeatPass: {
             validation: (value, { pass }) => {
-                if (value.length > 0 && pass.value.length > 0) {
-                    if (pass.value !== value) {
+                console.log(value,' :o ', pass)
+                if (value.length > 0 && pass.length > 0) {
+                    if (pass !== value) {
                         return 'password are not identical'
                     }
                 }
+            }
+        }
+    }
+})(SimpleForm);
+
+const onSubmit = (formValue) => {
+    console.log('form submitted ===> ', formValue)
+};
+
+<RxSimpleForm onSubmit={onSubmit} />
+```
+
+### Async validation
+
+```jsx
+const { rxForm } = require('./index');
+const Rx = require('rxjs');
+
+console.log(Rx)
+
+class SimpleForm extends React.Component {
+    render() {
+        console.log(this.props)
+        return (
+            <form>
+                <div>
+                    <input name="githubUser" placeholder="enter a username" />
+                    { this.props.githubUser.pending &&
+                        <span>...loading</span>
+                    }
+                    { !!this.props.githubUser.error &&
+                        <div style={{ color: 'red' }}>
+                            { this.props.githubUser.error }
+                        </div>
+                    }
+                </div>
+                <div>
+                    <button type="submit">Submit form</button>
+                </div>
+            </form>
+        )
+    }
+}
+
+const RxSimpleForm = rxForm({
+    fields: {
+        githubUser: {
+            validation$: (value) => {
+                return Rx.Observable.ajax(`https://api.github.com/users/${value}`)
+                    .mapTo('this user already exists')
+                    .catch(() => Rx.Observable.of(undefined))
             }
         }
     }
