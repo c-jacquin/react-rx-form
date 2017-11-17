@@ -123,7 +123,6 @@ const RxSimpleForm = rxForm({
         pass: {},
         repeatPass: {
             validation: (value, { pass }) => {
-                console.log(value,' :o ', pass)
                 if (value.length > 0 && pass.length > 0) {
                     if (pass !== value) {
                         return 'password are not identical'

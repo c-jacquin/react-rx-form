@@ -85,3 +85,21 @@ export interface InputObsParams {
 }
 
 export type ObsFactory<P> = (params: P) => Observable<InputEvent | any>
+
+// Wizard
+
+export interface WizardParams {
+  initialStep?: number
+  steps: Array<React.ComponentClass<any> | React.StatelessComponent<any>>
+}
+
+export interface WizardProps {
+  goTo: (step: number) => void
+  renderCurrentForm: () => void
+}
+
+export interface WizardState {
+  currentStep: number
+  formValue: FormValues
+  submitted: boolean
+}
