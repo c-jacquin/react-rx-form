@@ -151,10 +151,9 @@ export const rxForm = function<Props extends RequiredProps>({
 
               case 'range':
               case 'number':
-                try {
-                  parseInt(fieldValue as string, 10)
+                if (typeof fieldValue === 'number') {
                   inputElements[0].value = fieldValue.toString()
-                } catch (err) {
+                } else {
                   throw new Error(`${inputName} ${RxFormError.TYPE} number`)
                 }
                 break

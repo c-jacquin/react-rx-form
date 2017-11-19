@@ -53,10 +53,10 @@ class MainForm extends React.Component<any> {
 }
 
 describe('wizard hoc', () => {
-  let ReactiveFirstStep
-  let ReactiveSecondStep
-  let ReactiveFinalStep
-  let TestWizard
+  let ReactiveFirstStep: any
+  let ReactiveSecondStep: any
+  let ReactiveFinalStep: any
+  let TestWizard: any
 
   beforeEach(() => {
     ReactiveFirstStep = rxForm<any>({
@@ -89,7 +89,8 @@ describe('wizard hoc', () => {
     it('should calls setState', () => {
       const setStateSpy = jest.spyOn(TestWizard.prototype, 'setState')
       const mounted = mount(<TestWizard />)
-      mounted.instance().goTo(1)
+      const instance = mounted.instance() as any
+      instance.goTo(1)
 
       expect(setStateSpy).toHaveBeenCalledWith({
         currentStep: 1,
@@ -101,7 +102,8 @@ describe('wizard hoc', () => {
     it('should call setState', () => {
       const setStateSpy = jest.spyOn(TestWizard.prototype, 'setState')
       const mounted = mount(<TestWizard />)
-      mounted.instance().handleSubmit({})
+      const instance = mounted.instance() as any
+      instance.handleSubmit({})
       expect(setStateSpy).toHaveBeenCalled()
     })
 
@@ -111,11 +113,12 @@ describe('wizard hoc', () => {
         steps: [ReactiveFirstStep, ReactiveSecondStep, ReactiveFinalStep],
       })(MainForm)
       const props = {
-        onSubmit: console.log,
+        onSubmit: jest.fn(),
       }
       const onSubmitSpy = jest.spyOn(props, 'onSubmit')
       const mounted = mount(<TestWizard {...props} />)
-      mounted.instance().handleSubmit({})
+      const instance = mounted.instance() as any
+      instance.handleSubmit({})
       expect(onSubmitSpy).toHaveBeenCalled()
     })
   })

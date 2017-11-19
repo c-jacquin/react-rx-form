@@ -1,7 +1,16 @@
 import { InputObservable } from '../InputObservable'
 
 describe('InputObservable class', () => {
-  const inputElements = [document.createElement('input')]
+  const types = ['text', 'checkbox', 'radio']
+  const inputElements = [
+    document.createElement('input'),
+    document.createElement('input'),
+    document.createElement('input'),
+    document.createElement('input'),
+  ].map((input, index) => {
+    input.type = types[index]
+    return input
+  })
 
   it('should set config properties', () => {
     const obs$ = new InputObservable({
