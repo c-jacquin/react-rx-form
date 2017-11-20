@@ -10,12 +10,20 @@ import {
     RxFormParams,
     RxFormProps,
     RxFormState,
+    WizardParams,
+    WizardProps,
+    WizardState,
     FormValues,
     FormSubmitValues
-} from '../src'  
+} from '../src/types'
 
-interface ReactRxForm {
-    rxForm<Props> (fields: RxFormParams<Props>): (Comp: React.Component<Props & RxFormProps, any> | React.StatelessComponent<Props & RxFormProps>) => React.Component<Props, RxFormState>
+interface RxForm {
+    rxForm<Props> (params: RxFormParams<Props>): (Comp: React.Component<Props & RxFormProps, any>) => React.Component<Props, RxFormState>
 }
 
-export const reactRxForm: ReactRxForm
+interface WizardForm {
+    Wizard<Props> (params: WizardParams): (Comp: React.Component<Props & WizardProps, any>) => React.Component<Props, WizardState>
+}
+
+export const reactRxForm: RxForm
+export const wizard: WizardForm
