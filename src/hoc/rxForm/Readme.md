@@ -383,6 +383,35 @@ const onSubmit = (formValue) => {
 <RxCustomForm onSubmit={onSubmit} />
 ```
 
+### Transform value
+
+```jsx
+const { rxForm } = require('./index');
+
+class TransformForm extends React.Component {
+    render() {
+        return (
+            <form>
+                <input name="name" placeholder="uppercase value" />
+            </form>
+        )
+    }
+}
+
+const RxTransformForm = rxForm({
+    fields: {
+        name: {
+            transform: (value) => {
+                return value.toUpperCase()
+            }
+        }
+    }
+})(TransformForm);
+
+<RxTransformForm onSubmit={console.log} />
+
+```
+
 <!-- ### Bad usage
 ```jsx
 const { rxForm } = require('./index');

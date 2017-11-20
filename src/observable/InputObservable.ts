@@ -27,6 +27,7 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
   fields: Fields<Props>
   props: Props
   subscriptions: Subscription[] = []
+  inputElements: HTMLInputElement[] = []
 
   constructor({
     inputElements = [],
@@ -173,11 +174,37 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
     }
   }
 
+  @autobind
+  handleTransform(formValue: FormValues): FormValues {
+    const inputName = Object.keys(formValue)[0]
+    const field = this.fields[inputName]
+    const state = this.getValue()
+
+    if (typeof field.transform === 'function') {
+      const element = this.inputElements.find(input => input.name === inputName)
+      const value = field.transform(formValue[inputName].value, state, this.props) as string
+
+      if (element) {
+        element.value = value
+      }
+
+      return {
+        [inputName]: {
+          ...formValue[inputName],
+          value,
+        },
+      }
+    } else {
+      return formValue
+    }
+  }
+
   /**
    * add new observable inputs to the InputObservable
    * @param inputElements - the inputElement to add
    */
   addInputs(inputElements: HTMLInputElement[], selectElements: HTMLSelectElement[] = []): void {
+    this.inputElements = [...this.inputElements, ...inputElements]
     const text$ = createInputObservable({
       elements: inputElements,
       event: this.textEvent,
@@ -201,6 +228,7 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
     this.subscriptions.push(
       Observable.merge(text$, radio$, checkbox$, select$)
         .switchMap(this.handleError)
+        .map(this.handleTransform)
         .subscribe(this.handleSubscribe),
     )
   }
