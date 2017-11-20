@@ -10,7 +10,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'index.js',
-        libraryTarget: 'umd'
+        libraryTarget: 'commonjs-module'
     },
     devtool: 'source-map',
     externals : {
