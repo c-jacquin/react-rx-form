@@ -46,7 +46,7 @@ export const rxForm = function<Props extends RequiredProps>({
         fields,
         initialValue: this.state.formValue,
       })
-      formSubmit$ = new FormObservable(this.valueChange$)
+      formSubmit$ = new FormObservable(this.valueChange$, this.props.onError)
 
       valueChangeSubscription = new Subscription()
       formSubmitSubscription = new Subscription()
@@ -58,7 +58,7 @@ export const rxForm = function<Props extends RequiredProps>({
       /**
        * bind the root element of the decorated component to the class (must be a form tag)
        * handler for the ref attribute of the decorated component
-       * @param form 
+       * @param form
        */
       @autobind
       attachFormElement(form: Element) {
@@ -212,7 +212,7 @@ export const rxForm = function<Props extends RequiredProps>({
 
       /**
        * update the state of the form each time an input change and tick the valueChange$ Observable
-       * @param formValue the state of the form 
+       * @param formValue the state of the form
        */
       @autobind
       handleValueChangeSuccess(formValue: FormValues) {
@@ -239,6 +239,7 @@ export const rxForm = function<Props extends RequiredProps>({
         this.setInitialInputValues()
 
         this.valueChange$.addInputs(this.inputElements, this.selectElements)
+        this.formSubmit$.init(this.formElement)
 
         this.valueChangeSubscription = this.valueChange$
           .debounceTime(debounce)
@@ -246,9 +247,8 @@ export const rxForm = function<Props extends RequiredProps>({
           .subscribe(this.handleValueChangeSuccess)
 
         this.formSubmitSubscription = this.formSubmit$
-          .init(this.formElement)
           .do(() => this.setState({ submitted: true }))
-          .subscribe(this.props.onSubmit, this.props.onError)
+          .subscribe(this.props.onSubmit)
       }
 
       componentWillUnmount() {

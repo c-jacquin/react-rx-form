@@ -12,7 +12,9 @@ describe('FormObservable class', () => {
     const formObs = new FormObservable(input$)
     const handleSubmitSpy = jest.spyOn(FormObservable.prototype, 'handleFormSubmit')
     const formElement = document.createElement('form')
-    formObs.init(formElement).subscribe(data => {
+    formObs.init(formElement)
+
+    formObs.subscribe(data => {
       expect(handleSubmitSpy).toHaveBeenCalled()
       expect(data).toEqual({
         test: 'test',
@@ -22,23 +24,26 @@ describe('FormObservable class', () => {
     formElement.dispatchEvent(new Event('submit'))
   })
 
-  it('should throw en error in the form observable when submit and a field still has error', done => {
+  it('should call the onError callback when form observable submit and a field still has error', () => {
     const formValues = {
       test: {
         error: 'error !!!',
         value: 'test',
       },
     }
-    const input$ = new BehaviorSubject(formValues)
-    const formObs = new FormObservable(input$)
-    const formElement = document.createElement('form')
 
-    formObs.init(formElement).subscribe(jest.fn(), data => {
-      expect(data).toEqual({
-        test: 'error !!!',
-      })
-      done()
-    })
+    const onError = (error: any) => {}
+
+    const input$ = new BehaviorSubject(formValues)
+    const formObs = new FormObservable(input$, onError)
+    const formElement = document.createElement('form')
+    const onErrorSpy = jest.spyOn(formObs, 'onError')
+
+    formObs.init(formElement)
+
     formElement.dispatchEvent(new Event('submit'))
+    expect(onErrorSpy).toHaveBeenCalledWith({
+      test: 'error !!!',
+    })
   })
 })

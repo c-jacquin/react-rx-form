@@ -1,16 +1,20 @@
 import { Subject, Observable, BehaviorSubject } from 'rxjs'
-import { FormSubmitValues, FormValues } from '../types'
+import { FormSubmitValues, FormValues, FormErrors } from '../types'
 import autobind from 'autobind-decorator'
 
 export class FormObservable extends Subject<FormSubmitValues> {
   static EVENT = 'submit'
 
   input$: BehaviorSubject<FormValues>
+  onError: (error: FormErrors) => any
+  hasError: boolean
 
-  constructor(input$: BehaviorSubject<FormValues>, formElement?: HTMLFormElement) {
+  constructor(input$: BehaviorSubject<FormValues>, onError = (error: FormErrors) => {}, formElement?: HTMLFormElement) {
     super()
 
     this.input$ = input$
+    this.onError = onError
+    this.hasError = false
 
     if (formElement) {
       this.init(formElement)
@@ -25,12 +29,13 @@ export class FormObservable extends Subject<FormSubmitValues> {
   handleFormSubmit(event: Event) {
     event.preventDefault()
     let errorObject = {}
-    let hasError = false
     const inputValues = this.input$.getValue()
+    this.hasError = false
 
     const formValue = Object.keys(inputValues).reduce((obj, fieldName) => {
       if (inputValues[fieldName].error) {
-        hasError = true
+        this.hasError = true
+
         errorObject = {
           ...errorObject,
           [fieldName]: inputValues[fieldName].error,
@@ -43,14 +48,17 @@ export class FormObservable extends Subject<FormSubmitValues> {
       }
     }, {})
 
-    if (hasError) {
-      throw errorObject
+    if (this.hasError) {
+      this.onError(errorObject)
     }
 
     return formValue
   }
 
   init(formElement: HTMLFormElement) {
-    return this.merge(Observable.fromEvent(formElement, FormObservable.EVENT)).map(this.handleFormSubmit)
+    return Observable.merge(Observable.fromEvent(formElement, FormObservable.EVENT))
+      .map(this.handleFormSubmit)
+      .filter(() => !this.hasError)
+      .subscribe(this.next.bind(this))
   }
 }
