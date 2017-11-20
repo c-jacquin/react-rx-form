@@ -146,11 +146,8 @@ const onSubmit = (formValue) => {
 const { rxForm } = require('./index');
 const Rx = require('rxjs');
 
-console.log(Rx)
-
 class SimpleForm extends React.Component {
     render() {
-        console.log(this.props)
         return (
             <form>
                 <div>
@@ -196,6 +193,7 @@ const onSubmit = (formValue) => {
 
 ```jsx
 const { rxForm } = require('./index');
+const MaskedInput = require('react-text-mask');
 
 class SimpleForm extends React.Component {
     componentDidMount() {
@@ -224,6 +222,9 @@ class SimpleForm extends React.Component {
                         Women
                         <input type="radio" name="gender" value="women" id="women" />
                     </label>
+                </div>
+                <div>
+                    <MaskedInput.default name="mask" mask={['(', /[1-9]/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]} />
                 </div>
                 <div>
                     <select name="country">
@@ -268,6 +269,9 @@ const RxSimpleForm = rxForm({
         },
         items: {
             value: 45
+        },
+        mask: {
+            value: '(324) 234-2423'
         }
     },
     valueChangeObs: true

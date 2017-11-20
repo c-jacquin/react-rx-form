@@ -63,6 +63,7 @@
     "react-dom": "^16.0.0",
     "react-styleguidist": "^6.0.32",
     "react-test-renderer": "16.0.0",
+    "react-text-mask": "^5.0.2",
     "remap-istanbul": "^0.9.5",
     "rimraf": "^2.6.2",
     "rxjs": "^5.4.3",
