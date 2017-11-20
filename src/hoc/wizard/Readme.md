@@ -69,7 +69,7 @@ class MainForm extends React.Component {
                 </header>
                     {this.props.renderCurrentForm()}
                 <footer>
-                    Still the wizard form !!!!
+                    Step {this.props.currentStep + 1} / {this.props.totalSteps}
                 </footer>
             </section>
         )

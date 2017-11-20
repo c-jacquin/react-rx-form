@@ -22,7 +22,7 @@ interface RxForm {
 }
 
 interface WizardForm {
-    Wizard<Props> (params: WizardParams): (Comp: React.Component<Props & WizardProps, any>) => React.Component<Props, WizardState>
+    Wizard<Props> (params: WizardParams): (Comp: React.Component<Props & WizardProps & WizardState, any>) => React.Component<Props, WizardState>
 }
 
 export const reactRxForm: RxForm

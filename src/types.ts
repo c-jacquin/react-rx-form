@@ -103,4 +103,5 @@ export interface WizardState {
   currentStep: number
   formValue: FormValues
   submitted: boolean
+  totalSteps: number
 }
