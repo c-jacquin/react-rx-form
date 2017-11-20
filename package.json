@@ -20,6 +20,7 @@
     "precommit": "lint-staged",
     "start": "nps"
   },
+  "types": "typings/index.d.ts",
   "peerDependencies": {
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
