@@ -261,6 +261,7 @@ export const rxForm = function<Props extends RequiredProps>({
         return (
           <Comp
             ref={this.attachFormElement}
+            formSubmit$={this.formSubmit$}
             valueChange$={valueChangeObs ? this.valueChange$ : null}
             setValue={this.setValue}
             valid={!this.hasError()}
