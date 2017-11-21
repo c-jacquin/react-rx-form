@@ -25,5 +25,6 @@ interface WizardForm {
     Wizard<Props> (params: WizardParams): (Comp: React.Component<Props & WizardProps & WizardState, any>) => React.Component<Props, WizardState>
 }
 
-export const reactRxForm: RxForm
+export * from '../src/types'
+export const rxForm: RxForm
 export const wizard: WizardForm
