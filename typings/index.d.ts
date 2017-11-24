@@ -1,5 +1,4 @@
-import React from 'react'
-import { Observable, Subject } from 'rxjs'
+import * as React from 'react'
 
 import {
     Field,
@@ -7,24 +6,17 @@ import {
     FieldProp,
     FieldValue,
     FieldValueFunc,
+    FormValues,
+    FormSubmitValues,
+    RequiredProps,
     RxFormParams,
     RxFormProps,
     RxFormState,
     WizardParams,
     WizardProps,
     WizardState,
-    FormValues,
-    FormSubmitValues
 } from '../src/types'
 
-interface RxForm {
-    rxForm<Props> (params: RxFormParams<Props>): (Comp: React.Component<Props & RxFormProps, any>) => React.Component<Props, RxFormState>
-}
-
-interface WizardForm {
-    Wizard<Props> (params: WizardParams): (Comp: React.Component<Props & WizardProps & WizardState, any>) => React.Component<Props, WizardState>
-}
-
 export * from '../src/types'
-export const rxForm: RxForm
-export const wizard: WizardForm
+export declare function rxForm<Props>(params: RxFormParams<Props>): (Comp: React.ComponentClass<Props & RxFormProps> | React.StatelessComponent<Props & RxFormProps>) => React.ComponentClass<Props & RequiredProps>
+export declare function wizard<Props>(params: WizardParams): (Comp: React.ComponentClass<Props & WizardProps & WizardState>) => React.ComponentClass<Props & RequiredProps>
