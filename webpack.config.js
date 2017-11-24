@@ -10,14 +10,29 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'index.js',
-        libraryTarget: 'commonjs-module'
+        libraryTarget: 'commonjs2'
     },
+    externals: [{
+        react: {
+            root: 'React',
+            commonjs2: 'react',
+            commonjs: 'react',
+            amd: 'react'
+        },
+        'react-dom': {
+            root: 'ReactDOM',
+            commonjs2: 'react-dom',
+            commonjs: 'react-dom',
+            amd: 'react-dom'
+        },
+        rxjs: {
+            root: 'Rx',
+            commonjs2: 'rxjs',
+            commonjs: 'rxjs',
+            amd: 'rxjs'
+        }
+    }],
     devtool: 'source-map',
-    externals : {
-        react: 'react',
-        'react-dom': 'react-dom',
-        rxjs: 'rxjs'
-    },
     resolve: {
         modules: ['node_modules', 'src'],
         extensions: [".ts", ".tsx"]        
