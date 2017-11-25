@@ -36,7 +36,6 @@ export interface RequiredProps {
 }
 
 export interface RxFormProps {
-  ref?: any
   valueChange$?: Observable<FormValues> | null
   formSubmit$?: Observable<FormSubmitValues> | null
   setValue?: (state: any) => void
@@ -106,7 +105,7 @@ export interface WizardState {
   totalSteps: number
 }
 
-export interface WizardProps extends WizardState {
+export interface WizardProps extends WizardState, RequiredProps {
   goTo: (step: number) => void
   renderCurrentForm: () => void
 }

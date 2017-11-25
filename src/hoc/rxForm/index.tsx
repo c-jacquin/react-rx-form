@@ -29,7 +29,7 @@ export const rxForm = function<Props extends RequiredProps>({
   debounce = 300,
   throttle = 0,
 }: RxFormParams<Props>) {
-  return (Comp: React.ComponentClass<Props & RxFormProps> | React.StatelessComponent<Props & RxFormProps>) => {
+  return (Comp: React.ComponentClass<Props & RxFormProps> | any) => {
     /**
      * RxForm Higher order component
      */
@@ -61,15 +61,15 @@ export const rxForm = function<Props extends RequiredProps>({
        * @param form
        */
       @autobind
-      attachFormElement(form: Element) {
-        this.formElement = findDOMNode(form) as HTMLFormElement
+      attachFormElement(instance: React.Component<Props & RxFormProps>): void {
+        this.formElement = findDOMNode(instance) as HTMLFormElement
       }
 
       /**
        * used to validate the inputs during the first render
        * @see initState
        */
-      initSimplifiedFormValue() {
+      initSimplifiedFormValue(): FormValues {
         return Object.keys(fields).reduce((acc, fieldName) => {
           const fieldMeta = fields[fieldName]
           return {
@@ -82,7 +82,7 @@ export const rxForm = function<Props extends RequiredProps>({
       /**
        * parse the fields param and set the initial formValue, also determine if the form is dirty
        */
-      initState() {
+      initState(): RxFormState {
         return Object.keys(fields).reduce((state, fieldName) => {
           const fieldMeta = fields[fieldName]
           const fieldValue = typeof fieldMeta.value === 'function' ? fieldMeta.value(this.props) : fieldMeta.value || ''
@@ -111,7 +111,7 @@ export const rxForm = function<Props extends RequiredProps>({
       /**
        * set the initial value of input tag if specified in the config
        */
-      setInitialInputValues() {
+      setInitialInputValues(): void {
         Object.keys(fields).forEach(inputName => {
           const inputElements = this.inputElements.filter(element => element.getAttribute('name') === inputName)
           const selectElements = this.selectElements.filter(element => element.getAttribute('name') === inputName)
@@ -201,7 +201,7 @@ export const rxForm = function<Props extends RequiredProps>({
        * @returns {void}
        */
       @autobind
-      setValue(state: any) {
+      setValue(state: any): void {
         this.setState({
           formValue: {
             ...this.state.formValue,
@@ -215,7 +215,7 @@ export const rxForm = function<Props extends RequiredProps>({
        * @param formValue the state of the form
        */
       @autobind
-      handleValueChangeSuccess(formValue: FormValues) {
+      handleValueChangeSuccess(formValue: FormValues): void {
         this.setState({
           dirty: true,
           formValue,
@@ -226,7 +226,7 @@ export const rxForm = function<Props extends RequiredProps>({
        * handler for the filter of the inputs array, check if the input has a name property
        * @param element - input or select element
        */
-      handleFilterInputs(element: Element) {
+      handleFilterInputs(element: Element): boolean {
         return element.hasAttribute('name')
       }
 

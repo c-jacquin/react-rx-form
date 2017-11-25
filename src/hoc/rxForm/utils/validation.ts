@@ -1,4 +1,4 @@
-import { Fields } from '../../../types'
+import { Fields } from 'types'
 
 export enum RxFormError {
   TYPE = 'must be of type',
