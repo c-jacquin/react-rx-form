@@ -62,7 +62,21 @@ export const rxForm = function<Props extends RequiredProps>({
        */
       @autobind
       attachFormElement(instance: React.Component<Props & RxFormProps>): void {
-        this.formElement = findDOMNode(instance) as HTMLFormElement
+        const rootNode = findDOMNode(instance)
+
+        if (rootNode) {
+          if (rootNode.tagName === 'FORM') {
+            this.formElement = rootNode as HTMLFormElement
+          } else {
+            const formElement = rootNode.querySelector('form')
+
+            if (formElement) {
+              this.formElement = formElement
+            } else {
+              throw new Error(RxFormError.FORM)
+            }
+          }
+        }
       }
 
       /**

@@ -38,6 +38,68 @@ describe('rxForm HoC', () => {
     expect(mounted.find('form')).toBeDefined()
   })
 
+  it('should have a formElement property defined of type HTMLFormElement', () => {
+    const DecoratedComponent = rxForm<SimpleFormProps>({
+      debounce: 400,
+      fields: {
+        test: {},
+      },
+      throttle: 677,
+    })(SimpleForm)
+    const mounted = mount(<DecoratedComponent onSubmit={onSubmit} />)
+    const instance = mounted.instance() as any
+
+    expect(instance.formElement).toBeInstanceOf(HTMLFormElement)
+  })
+
+  it('should have a formElement property defined of type HTMLFormElement even if the root tag is not a form', () => {
+    class MyForm extends React.Component {
+      render() {
+        return (
+          <div>
+            <form>
+              <input name="test" />
+            </form>
+          </div>
+        )
+      }
+    }
+    const DecoratedComponent = rxForm<SimpleFormProps>({
+      debounce: 400,
+      fields: {
+        test: {},
+      },
+      throttle: 677,
+    })(MyForm)
+    const mounted = mount(<DecoratedComponent onSubmit={onSubmit} />)
+    const instance = mounted.instance() as any
+
+    expect(instance.formElement).toBeInstanceOf(HTMLFormElement)
+  })
+
+  it('should throw an error if no form tag is present in the dacorated component', () => {
+    console.error = jest.fn()
+    class MyForm extends React.Component {
+      render() {
+        return (
+          <div>
+            <input name="test" />
+          </div>
+        )
+      }
+    }
+    const DecoratedComponent = rxForm<SimpleFormProps>({
+      debounce: 400,
+      fields: {
+        test: {},
+      },
+      throttle: 677,
+    })(MyForm)
+    expect(() => {
+      mount(<DecoratedComponent onSubmit={onSubmit} />)
+    }).toThrow(RxFormError.FORM)
+  })
+
   it('should have the correct initial state', () => {
     const DecoratedComponent = rxForm<SimpleFormProps>({
       fields: {
