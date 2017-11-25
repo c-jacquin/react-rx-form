@@ -99,14 +99,14 @@ export interface WizardParams {
   steps: Array<React.ComponentClass<any> | React.StatelessComponent<any>>
 }
 
-export interface WizardProps {
-  goTo: (step: number) => void
-  renderCurrentForm: () => void
-}
-
 export interface WizardState {
   currentStep: number
   formValue: FormValues
   submitted: boolean
   totalSteps: number
+}
+
+export interface WizardProps extends WizardState {
+  goTo: (step: number) => void
+  renderCurrentForm: () => void
 }

@@ -4,9 +4,7 @@ import autobind from 'autobind-decorator'
 import { WizardParams, WizardProps, WizardState, FormValues, RequiredProps } from '../../types'
 
 export const wizard = function<Props extends RequiredProps>({ initialStep = 0, steps }: WizardParams) {
-  return (
-    Comp: React.ComponentClass<Props & WizardProps & WizardState> | React.StatelessComponent<Props & WizardProps>,
-  ) => {
+  return (Comp: React.ComponentClass<Props & WizardProps> | React.StatelessComponent<Props & WizardProps>) => {
     class RxWizardForm extends React.Component<Props, WizardState> {
       static displayName = `RxWizardForm(${Comp.displayName || Comp.name})`
 
