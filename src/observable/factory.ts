@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs'
-import { ObsFactory, InputObsParams, SelectObsParams } from '../types'
+import { ObsFactory, InputObsParams, SelectObsParams, FormObsParams } from '../types'
 
 /**
  * create an Observable of the given events of the given input elements of the given types
@@ -24,4 +24,14 @@ export const createInputObservable: ObsFactory<InputObsParams> = ({ elements, ty
  */
 export const createSelectObservable: ObsFactory<SelectObsParams> = ({ elements, event = 'change' }) => {
   return Observable.merge(...elements.map(element => Observable.fromEvent(element, event)))
+}
+
+/**
+ * Create an Observable of the given form (by default listen submit event)
+ * @param param
+ * @param param.element - form element
+ * @param param.event - the event to listen (submit ...)
+ */
+export const createFormObservable: ObsFactory<FormObsParams> = ({ element, event = 'submit' }) => {
+  return Observable.fromEvent(element, event)
 }

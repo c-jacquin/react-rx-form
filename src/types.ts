@@ -85,6 +85,11 @@ export interface InputObsParams {
   event?: string
 }
 
+export interface FormObsParams {
+  element: HTMLFormElement
+  event: string
+}
+
 export type ObsFactory<P> = (params: P) => Observable<InputEvent | any>
 
 // Wizard
