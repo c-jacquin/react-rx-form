@@ -234,6 +234,8 @@ export const rxForm = function<Props extends RequiredProps>({
         this.inputElements = Array.from(this.formElement.querySelectorAll('input')).filter(this.handleFilterInputs)
         this.selectElements = Array.from(this.formElement.querySelectorAll('select')).filter(this.handleFilterInputs)
 
+        this.formElement.setAttribute('novalidate', 'true')
+
         validateFiledsWithInputName(fields, [...this.inputElements, ...this.selectElements])
 
         this.setInitialInputValues()
