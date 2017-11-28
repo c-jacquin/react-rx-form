@@ -1,4 +1,9 @@
-import { BehaviorSubject, Observable, Subscription } from 'rxjs'
+import { Observable } from 'rxjs/Observable'
+import { BehaviorSubject } from 'rxjs/BehaviorSubject'
+import { Subscription } from 'rxjs/Subscription'
+import { map, switchMap } from 'rxjs/operators'
+import 'rxjs/add/observable/merge'
+
 import { FieldValue, InputEvent, FormValues, Fields } from '../types'
 import { createInputObservable, createSelectObservable } from 'observable/factory'
 import autobind from 'autobind-decorator'
@@ -227,8 +232,7 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
 
     this.subscriptions.push(
       Observable.merge(text$, radio$, checkbox$, select$)
-        .switchMap(this.handleError)
-        .map(this.handleTransform)
+        .pipe(switchMap(this.handleError), map(this.handleTransform))
         .subscribe(this.handleSubscribe),
     )
   }

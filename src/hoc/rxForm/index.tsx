@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { findDOMNode } from 'react-dom'
-import { Subscription } from 'rxjs'
+import { Subscription } from 'rxjs/Subscription'
+import { debounceTime, throttleTime, tap } from 'rxjs/operators'
 import autobind from 'autobind-decorator'
 
 import { FormValues, RequiredProps, RxFormState, RxFormProps, RxFormParams } from 'types'
@@ -258,12 +259,11 @@ export const rxForm = function<Props extends RequiredProps>({
         this.formSubmit$.init(this.formElement)
 
         this.valueChangeSubscription = this.valueChange$
-          .debounceTime(debounce)
-          .throttleTime(throttle)
+          .pipe(debounceTime(debounce), throttleTime(throttle))
           .subscribe(this.handleValueChangeSuccess)
 
         this.formSubmitSubscription = this.formSubmit$
-          .do(() => this.setState({ submitted: true }))
+          .pipe(tap(() => this.setState({ submitted: true })))
           .subscribe(this.props.onSubmit)
       }
 

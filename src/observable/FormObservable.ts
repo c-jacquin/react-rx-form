@@ -1,4 +1,6 @@
-import { Subject, BehaviorSubject } from 'rxjs'
+import { Subject } from 'rxjs/Subject'
+import { BehaviorSubject } from 'rxjs/BehaviorSubject'
+import { map, filter } from 'rxjs/operators'
 import { FormSubmitValues, FormValues, FormErrors } from '../types'
 import autobind from 'autobind-decorator'
 import { createFormObservable } from 'observable/factory'
@@ -58,8 +60,7 @@ export class FormObservable extends Subject<FormSubmitValues> {
 
   init(element: HTMLFormElement) {
     return createFormObservable({ element, event: FormObservable.EVENT })
-      .map(this.handleFormSubmit)
-      .filter(() => !this.hasError)
+      .pipe(map(this.handleFormSubmit), filter(() => !this.hasError))
       .subscribe(this.next.bind(this))
   }
 }

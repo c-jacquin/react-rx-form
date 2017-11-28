@@ -2,6 +2,7 @@ const path = require('path')
 const webpack = require('webpack')
 const { CheckerPlugin } = require('awesome-typescript-loader')
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
+const rxPaths = require('rxjs/_esm5/path-mapping');
 
 module.exports = {
     entry: {
@@ -35,7 +36,8 @@ module.exports = {
     devtool: 'source-map',
     resolve: {
         modules: ['node_modules', 'src'],
-        extensions: [".ts", ".tsx"]        
+        extensions: [".ts", ".tsx"],
+        alias: rxPaths()        
     },
     module: {
         rules: [
