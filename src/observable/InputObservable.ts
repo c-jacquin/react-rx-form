@@ -2,7 +2,6 @@ import { Observable } from 'rxjs/Observable'
 import { BehaviorSubject } from 'rxjs/BehaviorSubject'
 import { Subscription } from 'rxjs/Subscription'
 import { map, switchMap } from 'rxjs/operators'
-import 'rxjs/add/observable/merge'
 
 import { FieldValue, InputEvent, FormValues, Fields } from '../types'
 import { createInputObservable, createSelectObservable } from 'observable/factory'
@@ -214,21 +213,21 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
       elements: inputElements,
       event: this.textEvent,
       types: InputObservable.TEXT_INPUT,
-    }).map(this.standardInputFormatter)
+    }).pipe(map(this.standardInputFormatter))
 
     const radio$ = createInputObservable({
       elements: inputElements,
       event: this.radioEvent,
       types: InputObservable.RADIO_INPUT,
-    }).map(this.standardInputFormatter)
+    }).pipe(map(this.standardInputFormatter))
 
     const checkbox$ = createInputObservable({
       elements: inputElements,
       event: this.checkboxEvent,
       types: InputObservable.CHECKBOX_INPUT,
-    }).map(this.checkboxInputFormatter)
+    }).pipe(map(this.checkboxInputFormatter))
 
-    const select$ = createSelectObservable({ elements: selectElements }).map(this.standardInputFormatter)
+    const select$ = createSelectObservable({ elements: selectElements }).pipe(map(this.standardInputFormatter))
 
     this.subscriptions.push(
       Observable.merge(text$, radio$, checkbox$, select$)

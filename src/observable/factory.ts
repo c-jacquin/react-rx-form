@@ -1,4 +1,8 @@
-import { Observable } from 'rxjs'
+import { Observable } from 'rxjs/Observable'
+import 'rxjs/add/observable/merge'
+import 'rxjs/add/observable/fromEvent'
+import 'rxjs/add/observable/of'
+
 import { ObsFactory, InputObsParams, SelectObsParams, FormObsParams } from '../types'
 
 /**
