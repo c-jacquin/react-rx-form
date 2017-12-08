@@ -6,7 +6,7 @@ import { WizardParams, WizardProps, WizardState, FormValues, RequiredProps } fro
 export const wizard = function<Props extends RequiredProps>({ initialStep = 0, steps }: WizardParams) {
   return (Comp: React.ComponentClass<Props & WizardProps> | any) => {
     class RxWizardForm extends React.Component<Props, WizardState> {
-      static displayName = `RxWizardForm(${Comp.displayName || Comp.name})`
+      static displayName = `WizardForm(${Comp.displayName || Comp.name})`
 
       state = {
         currentStep: initialStep,
