@@ -1,2 +1,2 @@
-export * from 'hoc/rxForm'
-export * from 'hoc/wizard'
+export * from './rxForm'
+export * from './wizard'

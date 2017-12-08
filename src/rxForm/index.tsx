@@ -1,13 +1,12 @@
 import * as React from 'react'
 import { findDOMNode } from 'react-dom'
 import { Subscription } from 'rxjs/Subscription'
-import { debounceTime, throttleTime, tap } from 'rxjs/operators'
 import autobind from 'autobind-decorator'
 
-import { FormValues, RequiredProps, RxFormState, RxFormProps, RxFormParams } from 'types'
+import { FormValues, RequiredProps, RxFormState, RxFormProps, RxFormParams } from '../types'
 import { validateFiledsWithInputName, RxFormError } from './utils/validation'
-import { InputObservable } from 'observable/InputObservable'
-import { FormObservable } from 'observable/FormObservable'
+import { InputObservable } from '../observable/InputObservable'
+import { FormObservable } from '../observable/FormObservable'
 
 const initialState = {
   dirty: false,
@@ -259,11 +258,12 @@ export const rxForm = function<Props extends RequiredProps>({
         this.formSubmit$.init(this.formElement)
 
         this.valueChangeSubscription = this.valueChange$
-          .pipe(debounceTime(debounce), throttleTime(throttle))
+          .debounceTime(debounce)
+          .throttleTime(throttle)
           .subscribe(this.handleValueChangeSuccess)
 
         this.formSubmitSubscription = this.formSubmit$
-          .pipe(tap(() => this.setState({ submitted: true })))
+          .do(() => this.setState({ submitted: true }))
           .subscribe(this.props.onSubmit)
       }
 

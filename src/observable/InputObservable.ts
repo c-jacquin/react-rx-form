@@ -1,11 +1,10 @@
 import { Observable } from 'rxjs/Observable'
 import { BehaviorSubject } from 'rxjs/BehaviorSubject'
 import { Subscription } from 'rxjs/Subscription'
-import { map, switchMap } from 'rxjs/operators'
+import autobind from 'autobind-decorator'
 
 import { FieldValue, InputEvent, FormValues, Fields } from '../types'
-import { createInputObservable, createSelectObservable } from 'observable/factory'
-import autobind from 'autobind-decorator'
+import { createInputObservable, createSelectObservable } from './factory'
 
 export interface InputObservableParams<Props> {
   checkboxEvent?: string
@@ -213,25 +212,26 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
       elements: inputElements,
       event: this.textEvent,
       types: InputObservable.TEXT_INPUT,
-    }).pipe(map(this.standardInputFormatter))
+    }).map(this.standardInputFormatter)
 
     const radio$ = createInputObservable({
       elements: inputElements,
       event: this.radioEvent,
       types: InputObservable.RADIO_INPUT,
-    }).pipe(map(this.standardInputFormatter))
+    }).map(this.standardInputFormatter)
 
     const checkbox$ = createInputObservable({
       elements: inputElements,
       event: this.checkboxEvent,
       types: InputObservable.CHECKBOX_INPUT,
-    }).pipe(map(this.checkboxInputFormatter))
+    }).map(this.checkboxInputFormatter)
 
-    const select$ = createSelectObservable({ elements: selectElements }).pipe(map(this.standardInputFormatter))
+    const select$ = createSelectObservable({ elements: selectElements }).map(this.standardInputFormatter)
 
     this.subscriptions.push(
       Observable.merge(text$, radio$, checkbox$, select$)
-        .pipe(switchMap(this.handleError), map(this.handleTransform))
+        .switchMap(this.handleError)
+        .map(this.handleTransform)
         .subscribe(this.handleSubscribe),
     )
   }

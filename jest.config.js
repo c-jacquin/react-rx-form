@@ -1,8 +1,8 @@
 module.exports = {
     collectCoverageFrom: [
-        'src/hoc/**/*.{ts,tsx}',
+        'src/**/*.{ts,tsx}',
+        '!src/index.ts',
         '!src/**/*.test.{ts, tsx}',
-        '!src/**/*.d.ts',
         '!src/**/types.ts',
         '!**/node_modules/**'
     ],

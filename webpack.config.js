@@ -2,7 +2,7 @@ const path = require('path')
 const webpack = require('webpack')
 const { CheckerPlugin } = require('awesome-typescript-loader')
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
-const rxPaths = require('rxjs/_esm5/path-mapping');
+const webpackRxjsExternals = require('webpack-rxjs-externals')
 
 module.exports = {
     entry: {
@@ -13,31 +13,27 @@ module.exports = {
         filename: 'index.js',
         libraryTarget: 'commonjs2'
     },
-    externals: [{
-        react: {
-            root: 'React',
-            commonjs2: 'react',
-            commonjs: 'react',
-            amd: 'react'
+    externals: [
+        {
+            react: {
+                root: 'React',
+                commonjs2: 'react',
+                commonjs: 'react',
+                amd: 'react'
+            },
+            'react-dom': {
+                root: 'ReactDOM',
+                commonjs2: 'react-dom',
+                commonjs: 'react-dom',
+                amd: 'react-dom'
+            },
         },
-        'react-dom': {
-            root: 'ReactDOM',
-            commonjs2: 'react-dom',
-            commonjs: 'react-dom',
-            amd: 'react-dom'
-        },
-        rxjs: {
-            root: 'Rx',
-            commonjs2: 'rxjs',
-            commonjs: 'rxjs',
-            amd: 'rxjs'
-        }
-    }],
+        webpackRxjsExternals()
+    ],
     devtool: 'source-map',
     resolve: {
-        modules: ['node_modules', 'src'],
         extensions: [".ts", ".tsx"],
-        alias: rxPaths()        
+        modules: ['node_modules']
     },
     module: {
         rules: [
@@ -58,9 +54,6 @@ module.exports = {
     },
     plugins: ([
         new webpack.optimize.OccurrenceOrderPlugin(),
-        new webpack.NamedModulesPlugin(),
-        new FriendlyErrorsWebpackPlugin(),        
-        new webpack.NoEmitOnErrorsPlugin(),
         new webpack.LoaderOptionsPlugin({
             minimize: true,
             debug: false

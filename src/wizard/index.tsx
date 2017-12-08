@@ -1,7 +1,7 @@
 import * as React from 'react'
 import autobind from 'autobind-decorator'
 
-import { WizardParams, WizardProps, WizardState, FormValues, RequiredProps } from '../../types'
+import { WizardParams, WizardProps, WizardState, FormValues, RequiredProps } from '../types'
 
 export const wizard = function<Props extends RequiredProps>({ initialStep = 0, steps }: WizardParams) {
   return (Comp: React.ComponentClass<Props & WizardProps> | any) => {
