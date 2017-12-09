@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 
 export * from './rxForm'
 export * from './wizard'
+export * from './wizard/SimpleWizard'
 
 export const fieldShape = PropTypes.shape({
   dirty: PropTypes.bool,
