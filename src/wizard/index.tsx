@@ -32,7 +32,10 @@ export const wizard = function<Props extends RequiredProps>({ initialStep = 0, s
         this.setState(
           {
             currentStep,
-            formExtraProps: formValue,
+            formExtraProps: {
+              ...this.state.formExtraProps,
+              ...formValue,
+            },
             formValue: {
               ...this.state.formValue,
               ...formValue,
