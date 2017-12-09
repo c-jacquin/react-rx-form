@@ -10,15 +10,17 @@ export const wizard = function<Props extends RequiredProps>({ initialStep = 0, s
 
       state = {
         currentStep: initialStep,
+        formExtraProps: {},
         formValue: {},
         submitted: false,
         totalSteps: steps.length,
       }
 
       @autobind
-      goTo(step: number): void {
+      goTo(step: number, formExtraProps: any): void {
         this.setState({
           currentStep: step,
+          formExtraProps,
         })
       }
 
@@ -30,6 +32,7 @@ export const wizard = function<Props extends RequiredProps>({ initialStep = 0, s
         this.setState(
           {
             currentStep,
+            formExtraProps: formValue,
             formValue: {
               ...this.state.formValue,
               ...formValue,
@@ -45,10 +48,28 @@ export const wizard = function<Props extends RequiredProps>({ initialStep = 0, s
       }
 
       @autobind
+      handleGoBack() {
+        if (this.state.currentStep !== 0) {
+          this.setState({
+            currentStep: this.state.currentStep - 1,
+          })
+        }
+      }
+
+      @autobind
       renderCurrentForm(): JSX.Element {
-        const { currentStep } = this.state
+        const { currentStep, formExtraProps } = this.state
         const FormComponent = steps[currentStep]
-        return <FormComponent onSubmit={this.handleSubmit} onError={this.props.onError} />
+
+        return (
+          <FormComponent
+            {...this.props}
+            {...formExtraProps}
+            goBack={this.handleGoBack}
+            onSubmit={this.handleSubmit}
+            onError={this.props.onError}
+          />
+        )
       }
 
       render(): JSX.Element {
