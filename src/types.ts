@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs'
+import { Observable } from 'rxjs/Observable'
 
 export type FieldValue = string | number | boolean | Date
 export type FieldValueFunc<Props> = (props: Props) => FieldValue
@@ -108,5 +108,5 @@ export interface WizardState {
 
 export interface WizardProps extends WizardState, RequiredProps {
   goTo: (step: number) => void
-  renderCurrentForm: () => void
+  renderCurrentForm: () => JSX.Element
 }

@@ -2,7 +2,8 @@ module.exports = {
     collectCoverageFrom: [
         'src/**/*.{ts,tsx}',
         '!src/index.ts',
-        '!src/wizard/SimpleWizard.tsx',
+        '!src/components/**',
+        '!src/utils/**',
         '!src/**/*.test.{ts, tsx}',
         '!src/**/types.ts',
         '!**/node_modules/**'

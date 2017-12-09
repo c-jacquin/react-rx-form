@@ -1,12 +1,4 @@
-import PropTypes from 'prop-types'
-
 export * from './rxForm'
 export * from './wizard'
-export * from './wizard/SimpleWizard'
-
-export const fieldShape = PropTypes.shape({
-  dirty: PropTypes.bool,
-  error: PropTypes.string,
-  touched: PropTypes.bool,
-  value: PropTypes.oneOfType([PropTypes.bool, PropTypes.string, PropTypes.number, PropTypes.instanceOf(Date)]),
-})
+export * from './components'
+export * from './utils/propTypes'
