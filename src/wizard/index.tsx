@@ -3,17 +3,19 @@ import autobind from 'autobind-decorator'
 
 import { WizardParams, WizardProps, WizardState, FormValues, RequiredProps } from '../types'
 
-export const wizard = function<Props extends RequiredProps>({ initialStep = 0, steps }: WizardParams) {
+export const wizard = function<Props extends RequiredProps>({ initialStep = 0, steps }: WizardParams<Props>) {
   return (Comp: React.ComponentClass<Props & WizardProps> | any) => {
     class RxWizardForm extends React.Component<Props, WizardState> {
       static displayName = `WizardForm(${Comp.displayName || Comp.name})`
+
+      steps = typeof steps === 'function' ? steps(this.props) : steps
 
       state = {
         currentStep: initialStep,
         formExtraProps: {},
         formValue: {},
         submitted: false,
-        totalSteps: steps.length,
+        totalSteps: this.steps.length,
       }
 
       @autobind
@@ -26,7 +28,7 @@ export const wizard = function<Props extends RequiredProps>({ initialStep = 0, s
 
       @autobind
       handleSubmit(formValue: FormValues): void {
-        const submitted = this.state.currentStep === steps.length - 1
+        const submitted = this.state.currentStep === this.steps.length - 1
         const currentStep = submitted ? this.state.currentStep : this.state.currentStep + 1
 
         this.setState(
@@ -62,7 +64,7 @@ export const wizard = function<Props extends RequiredProps>({ initialStep = 0, s
       @autobind
       renderCurrentForm(): JSX.Element {
         const { currentStep, formExtraProps } = this.state
-        const FormComponent = steps[currentStep]
+        const FormComponent = this.steps[currentStep]
 
         return (
           <FormComponent

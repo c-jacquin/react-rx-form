@@ -93,9 +93,11 @@ export type ObsFactory<P> = (params: P) => Observable<InputEvent | any>
 
 // Wizard
 
-export interface WizardParams {
+type StepsFunction<Props> = (props: Props) => Array<React.ComponentClass<any> | React.StatelessComponent<any>>
+
+export interface WizardParams<Props> {
   initialStep?: number
-  steps: Array<React.ComponentClass<any> | React.StatelessComponent<any>>
+  steps: (Array<React.ComponentClass<any> | React.StatelessComponent<any>>) | StepsFunction<Props>
 }
 
 export interface WizardState {
