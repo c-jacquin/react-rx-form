@@ -27,7 +27,7 @@ export const wizard = function<Props extends RequiredProps>({ initialStep = 0, s
       }
 
       @autobind
-      handleSubmit(formValue: FormValues): void {
+      handleSubmit(formValue: FormValues, formExtraProps: any): void {
         const submitted = this.state.currentStep === this.steps.length - 1
         const currentStep = submitted ? this.state.currentStep : this.state.currentStep + 1
 
@@ -36,7 +36,7 @@ export const wizard = function<Props extends RequiredProps>({ initialStep = 0, s
             currentStep,
             formExtraProps: {
               ...this.state.formExtraProps,
-              ...formValue,
+              ...formExtraProps,
             },
             formValue: {
               ...this.state.formValue,
