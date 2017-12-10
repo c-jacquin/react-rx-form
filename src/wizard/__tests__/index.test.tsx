@@ -111,6 +111,7 @@ describe('wizard hoc', () => {
       TestWizard = wizard<any>({
         initialStep: 2,
         steps: [ReactiveFirstStep, ReactiveSecondStep, ReactiveFinalStep],
+        submitStep: 2,
       })(MainForm)
       const props = {
         onSubmit: jest.fn(),
