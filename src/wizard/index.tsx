@@ -6,7 +6,7 @@ import { WizardParams, WizardProps, WizardState, FormValues, RequiredProps } fro
 export const wizard = function<Props extends RequiredProps>({
   initialStep = 0,
   steps,
-  submitStep = steps.length - 1,
+  submitStep = steps.length - 2,
 }: WizardParams<Props>) {
   return (Comp: React.ComponentClass<Props & WizardProps> | any) => {
     class RxWizardForm extends React.Component<Props, WizardState> {
