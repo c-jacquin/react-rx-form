@@ -97,6 +97,7 @@ type StepsFunction<Props> = (props: Props) => Array<React.ComponentClass<any> | 
 
 export interface WizardParams<Props> {
   initialStep?: number
+  submitStep?: number
   steps: (Array<React.ComponentClass<any> | React.StatelessComponent<any>>) | StepsFunction<Props>
 }
 

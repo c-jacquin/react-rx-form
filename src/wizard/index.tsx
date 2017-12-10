@@ -3,7 +3,11 @@ import autobind from 'autobind-decorator'
 
 import { WizardParams, WizardProps, WizardState, FormValues, RequiredProps } from '../types'
 
-export const wizard = function<Props extends RequiredProps>({ initialStep = 0, steps }: WizardParams<Props>) {
+export const wizard = function<Props extends RequiredProps>({
+  initialStep = 0,
+  steps,
+  submitStep = steps.length - 1,
+}: WizardParams<Props>) {
   return (Comp: React.ComponentClass<Props & WizardProps> | any) => {
     class RxWizardForm extends React.Component<Props, WizardState> {
       static displayName = `WizardForm(${Comp.displayName || Comp.name})`
@@ -28,7 +32,7 @@ export const wizard = function<Props extends RequiredProps>({ initialStep = 0, s
 
       @autobind
       handleSubmit(formValue: FormValues, formExtraProps: any): void {
-        const submitted = this.state.currentStep === this.steps.length - 1
+        const submitted = this.state.currentStep === submitStep
         const currentStep = submitted ? this.state.currentStep : this.state.currentStep + 1
 
         this.setState(
