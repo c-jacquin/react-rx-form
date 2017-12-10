@@ -28,6 +28,7 @@ export const rxForm = function<Props extends RequiredProps>({
   valueChangeObs,
   debounce = 300,
   throttle = 0,
+  transform = data => data,
 }: RxFormParams<Props>) {
   return (Comp: React.ComponentClass<Props & RxFormProps> | any) => {
     /**
@@ -263,6 +264,7 @@ export const rxForm = function<Props extends RequiredProps>({
           .subscribe(this.handleValueChangeSuccess)
 
         this.formSubmitSubscription = this.formSubmit$
+          .map(formValue => transform(formValue, this.props))
           .do(() => this.setState({ submitted: true }))
           .subscribe(this.props.onSubmit)
       }

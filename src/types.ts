@@ -8,6 +8,7 @@ export interface RxFormParams<Props> {
   valueChangeObs?: boolean
   debounce?: number
   throttle?: number
+  transform?: (formValue: FormSubmitValues, props: Props) => FormSubmitValues
 }
 
 export interface Fields<Props> {
