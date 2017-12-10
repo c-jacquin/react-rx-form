@@ -9,7 +9,7 @@ export enum RxFormError {
 
 export const validateFiledsWithInputName = (fields: Fields<any>, inputElements: Element[]) => {
   const fieldsNames = Object.keys(fields).filter(fieldName => {
-    return !fields[fieldName].customInput
+    return !fields[fieldName].customInput || !fields[fieldName].optional
   })
   const inputNames = inputElements.map(element => element.getAttribute('name') || '')
 
