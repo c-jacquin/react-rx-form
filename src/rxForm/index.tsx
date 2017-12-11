@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription'
 import autobind from 'autobind-decorator'
 
 import { FormValues, RequiredProps, RxFormState, RxFormProps, RxFormParams } from '../types'
-import { validateFiledsWithInputName, RxFormError } from './utils/validation'
+import { RxFormError } from './utils/validation'
 import { InputObservable } from '../observable/InputObservable'
 import { FormObservable } from '../observable/FormObservable'
 
@@ -251,7 +251,7 @@ export const rxForm = function<Props extends RequiredProps>({
 
         this.formElement.setAttribute('novalidate', 'true')
 
-        validateFiledsWithInputName(fields, [...this.inputElements, ...this.selectElements])
+        // validateFiledsWithInputName(fields, [...this.inputElements, ...this.selectElements])
 
         this.setInitialInputValues()
 
