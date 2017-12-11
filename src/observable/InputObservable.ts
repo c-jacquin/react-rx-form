@@ -28,7 +28,7 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
   radioEvent?: string
   selectEvent?: string
   fields: Fields<Props>
-  props: Props
+  props: Props | undefined
   subscriptions: Subscription[] = []
   inputElements: HTMLInputElement[] = []
 
@@ -41,6 +41,7 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
     textEvent = 'input',
     radioEvent = 'change',
     selectEvent = 'change',
+    props,
   }: InputObservableParams<Props>) {
     super(initialValue)
 
@@ -49,6 +50,7 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
     this.radioEvent = radioEvent
     this.selectEvent = selectEvent
     this.fields = fields
+    this.props = props
 
     if (inputElements.length > 0 || selectElements.length > 0) {
       this.addInputs(inputElements, selectElements)

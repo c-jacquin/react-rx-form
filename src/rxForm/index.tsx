@@ -46,6 +46,7 @@ export const rxForm = function<Props extends RequiredProps>({
       valueChange$ = new InputObservable({
         fields,
         initialValue: this.state.formValue,
+        props: this.props,
       })
       formSubmit$ = new FormObservable(this.valueChange$, this.props.onError)
 
