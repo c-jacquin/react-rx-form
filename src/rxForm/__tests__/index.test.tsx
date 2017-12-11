@@ -235,12 +235,10 @@ describe('rxForm HoC', () => {
       })(SimpleForm)
       const mounted: any = mount(<DecoratedComponent onSubmit={onSubmit} />)
       const instance = mounted.instance()
-      const setStateSpy = jest.spyOn(instance, 'setState')
+      const setStateSpy = jest.spyOn(instance.valueChange$, 'next')
 
       instance.setValue({
-        test: {
-          value: 'tototo',
-        },
+        test: 'test',
       })
       expect(setStateSpy).toHaveBeenCalled()
     })
