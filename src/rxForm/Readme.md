@@ -416,6 +416,40 @@ const RxTransformForm = rxForm({
 
 ```
 
+Dynamic Form
+```jsx
+const { rxForm } = require('./index');
+
+class DynamicForm extends React.Component {
+    componentDidUpdate({name}) {
+        if (name.value === '' && this.props.name.value !== '') {
+            this.props.addInputs(['isOk'])
+        }
+    }
+
+    render() {
+        return (
+            <form>
+                <input name="name" />
+                { this.props.name.value !== '' &&
+                    <input type="radio" name="isOk" value="fuck yeah" />
+                }
+               <button type="submit">Submit</button>
+            </form>
+        )
+    }
+}
+
+const RxDynamicForm = rxForm({
+    fields: {
+        name: {},
+        isOk: {}
+    }
+})(DynamicForm);
+
+<RxDynamicForm onSubmit={console.log} />
+```
+
 <!-- ### Bad usage
 ```jsx
 const { rxForm } = require('./index');

@@ -210,6 +210,7 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
    */
   addInputs(inputElements: HTMLInputElement[], selectElements: HTMLSelectElement[] = []): void {
     this.inputElements = [...this.inputElements, ...inputElements]
+
     const text$ = createInputObservable({
       elements: inputElements,
       event: this.textEvent,

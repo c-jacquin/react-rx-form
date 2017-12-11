@@ -219,10 +219,14 @@ export const rxForm = function<Props extends RequiredProps>({
       @autobind
       handleAddInputs(inputsNames: string[], selectNames = []) {
         this.valueChange$.addInputs(
-          inputsNames.map(inputName => this.formElement.querySelector(`input[name=${inputName}]`) as HTMLInputElement),
-          selectNames.map(
-            selectName => this.formElement.querySelector(`select[name=${selectName}]`) as HTMLSelectElement,
-          ),
+          inputsNames.reduce((acc, inputName) => {
+            const inputs = Array.from(
+              this.formElement.querySelectorAll(`input[name=${inputName}]`),
+            ) as HTMLInputElement[]
+
+            return [...acc, ...inputs]
+          }, []),
+          selectNames.map(selectName => document.querySelector(`select[name=${selectName}]`) as HTMLSelectElement),
         )
       }
 
