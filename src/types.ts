@@ -105,7 +105,6 @@ export interface WizardParams<Props> {
 
 export interface WizardState {
   currentStep: number
-  formExtraProps: any
   formValue: FormValues
   submitted: boolean
   totalSteps: number
