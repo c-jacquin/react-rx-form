@@ -339,14 +339,8 @@ const { Editor, EditorState } = require('draft-js');
 
 
 class CustomForm extends React.Component {
-    
-    
     handleDescriptionChange(description) {
-        this.props.setValue({
-            description: {
-                value: description
-            }
-        })
+        this.props.setValue({ description })
     }
 
     constructor(props) {

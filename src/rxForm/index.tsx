@@ -237,12 +237,21 @@ export const rxForm = function<Props extends RequiredProps>({
        */
       @autobind
       setValue(state: any): void {
-        this.setState({
-          formValue: {
-            ...this.state.formValue,
-            ...state,
+        const key = Object.keys(state)[0]
+
+        this.valueChange$.next({
+          ...this.state.formValue,
+          [key]: {
+            ...this.state.formValue[key],
+            value: state[key],
           },
         })
+        // this.setState({
+        //   formValue: {
+        //     ...this.state.formValue,
+        //     ...state,
+        //   },
+        // })
       }
 
       /**
