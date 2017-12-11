@@ -571,39 +571,39 @@ describe('rxForm HoC', () => {
     })
   })
 
-  describe('Error', () => {
-    beforeEach(() => {
-      console.error = jest.fn()
-    })
+  // describe('Error', () => {
+  //   beforeEach(() => {
+  //     console.error = jest.fn()
+  //   })
 
-    it('should throw an error if fields key didnt match the inputs name attribute', () => {
-      expect(() => {
-        class BadForm extends React.Component<any, any> {
-          componentDidCatch() {}
-          render() {
-            return (
-              <form>
-                <input />
-              </form>
-            )
-          }
-        }
-        const DecoratedComponent = rxForm<any>({
-          fields: {
-            test: {},
-          },
-        })(BadForm)
-        mount(<DecoratedComponent />)
-      }).toThrow(RxFormError.INPUT + 'test')
-    })
+  //   it('should throw an error if fields key didnt match the inputs name attribute', () => {
+  //     expect(() => {
+  //       class BadForm extends React.Component<any, any> {
+  //         componentDidCatch() {}
+  //         render() {
+  //           return (
+  //             <form>
+  //               <input />
+  //             </form>
+  //           )
+  //         }
+  //       }
+  //       const DecoratedComponent = rxForm<any>({
+  //         fields: {
+  //           test: {},
+  //         },
+  //       })(BadForm)
+  //       mount(<DecoratedComponent />)
+  //     }).toThrow(RxFormError.INPUT + 'test')
+  //   })
 
-    it('should throw an error if fields key didnt match the inputs name attribute', () => {
-      expect(() => {
-        const DecoratedComponent = rxForm<SimpleFormProps>({
-          fields: {},
-        })(SimpleForm)
-        mount(<DecoratedComponent onSubmit={onSubmit} />)
-      }).toThrow(RxFormError.FIELD + 'test')
-    })
-  })
+  //   it('should throw an error if fields key didnt match the inputs name attribute', () => {
+  //     expect(() => {
+  //       const DecoratedComponent = rxForm<SimpleFormProps>({
+  //         fields: {},
+  //       })(SimpleForm)
+  //       mount(<DecoratedComponent onSubmit={onSubmit} />)
+  //     }).toThrow(RxFormError.FIELD + 'test')
+  //   })
+  // })
 })
