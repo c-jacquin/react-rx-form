@@ -41,6 +41,7 @@ export interface RxFormProps {
   valueChange$?: Observable<FormValues> | null
   formSubmit$?: Observable<FormSubmitValues> | null
   setValue?: (state: any) => void
+  addInputs?: (inputNames: string[], selectNames: string[]) => void
   valid?: boolean
   submitted?: boolean
 }

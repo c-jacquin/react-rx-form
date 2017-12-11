@@ -212,8 +212,23 @@ export const rxForm = function<Props extends RequiredProps>({
       }
 
       /**
+       * utility used to add input to the InputObservable instance, usefull for dynamic form
+       * @param {string[]} inputsNames
+       * @param {string[]} selectNames
+       */
+      @autobind
+      handleAddInputs(inputsNames: string[], selectNames = []) {
+        this.valueChange$.addInputs(
+          inputsNames.map(inputName => this.formElement.querySelector(`input[name=${inputName}]`) as HTMLInputElement),
+          selectNames.map(
+            selectName => this.formElement.querySelector(`select[name=${selectName}]`) as HTMLSelectElement,
+          ),
+        )
+      }
+
+      /**
        * Usefull to update the form state without trigering dom event, (custom component)
-       * @param {state} - the data to add to the state { [fieldName]: fieldValue }
+       * @param {Object} state - the data to add to the state { [fieldName]: fieldValue }
        * @returns {void}
        */
       @autobind
@@ -283,6 +298,7 @@ export const rxForm = function<Props extends RequiredProps>({
             formSubmit$={this.formSubmit$}
             valueChange$={valueChangeObs ? this.valueChange$ : null}
             setValue={this.setValue}
+            addInputs={this.handleAddInputs}
             valid={!this.hasError()}
             submitted={this.state.submitted}
             {...this.state.formValue}
