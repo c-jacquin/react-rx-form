@@ -349,6 +349,7 @@ class CustomForm extends React.Component {
     }
 
     render() {
+        console.log(this.props.description)
         return (
             <form>
                 <div>
@@ -369,6 +370,10 @@ const RxCustomForm = rxForm({
     fields: {
         email: {},
         description: {
+            validation: (value) => {
+                return 'EROROROROR'
+                console.log('validation', value)
+            },
             value: EditorState.createEmpty(),
             customInput: true
         }
@@ -378,7 +383,7 @@ const RxCustomForm = rxForm({
 const onSubmit = (formValue) => {
     console.log('form submitted ===> ', formValue)
 };
-<RxCustomForm onSubmit={onSubmit} />
+<RxCustomForm onSubmit={onSubmit} onError={console.log} />
 ```
 
 ### Transform value

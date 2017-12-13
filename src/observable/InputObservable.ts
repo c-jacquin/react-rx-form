@@ -100,6 +100,13 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
     }
   }
 
+  @autobind
+  setValue(formValue: FormValues): void {
+    this.handleError(formValue)
+      .map(this.handleTransform)
+      .subscribe(this.next.bind(this))
+  }
+
   /**
    * standard input data formatter (input text, radioButton, select)
    * @param event - input or change event
