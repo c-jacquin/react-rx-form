@@ -28,7 +28,8 @@ export const rxForm = function<Props extends RequiredProps>({
   valueChangeObs,
   debounce = 300,
   throttle = 0,
-  transform = data => data,
+  beforeSubmit,
+  afterSubmit,
 }: RxFormParams<Props>) {
   return (Comp: React.ComponentClass<Props & RxFormProps> | any) => {
     /**
@@ -285,9 +286,16 @@ export const rxForm = function<Props extends RequiredProps>({
           .subscribe(this.handleValueChangeSuccess)
 
         this.formSubmitSubscription = this.formSubmit$
-          .map(formValue => transform(formValue, this.props))
+          .map(formValue => {
+            return typeof beforeSubmit === 'function' ? beforeSubmit(formValue, this.props) : formValue
+          })
           .do(() => this.setState({ submitted: true }))
-          .subscribe(this.props.onSubmit)
+          .subscribe(formValue => {
+            this.props.onSubmit(formValue)
+            if (typeof afterSubmit === 'function') {
+              afterSubmit(formValue, this.props)
+            }
+          })
       }
 
       componentWillUnmount() {
