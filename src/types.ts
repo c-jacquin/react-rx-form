@@ -28,7 +28,8 @@ export interface Field<Props> {
   value?: FieldValue | FieldValueFunc<Props>
   validation?: (value: FieldValue, state: FormValues, props: Props) => string | undefined
   validation$?: (value: FieldValue, state: FormValues, props: Props) => Observable<string | undefined>
-  transform?: (value: FieldValue, state: FormValues, props: Props) => FieldValue
+  beforeValidation?: (value: FieldValue, state: FormValues, props: Props) => FieldValue
+  afterValidation?: (value: FieldValue, state: FormValues, props: Props) => FieldValue
   customInput?: boolean
   optional?: boolean
 }

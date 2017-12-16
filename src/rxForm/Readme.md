@@ -386,7 +386,7 @@ const onSubmit = (formValue) => {
 <RxCustomForm onSubmit={onSubmit} onError={console.log} />
 ```
 
-### Transform value
+### LifeCycle
 
 ```jsx
 const { rxForm } = require('./index');
@@ -404,8 +404,15 @@ class TransformForm extends React.Component {
 const RxTransformForm = rxForm({
     fields: {
         name: {
-            transform: (value) => {
+            beforeValidation: (value) => {
+                console.log('before validation', value)
                 return value.toUpperCase()
+            },
+            validation: (value) => {
+                console.log('validation', value)
+            },
+            afterValidation: (value) => {
+                console.log('afterValidation', value)
             }
         }
     }

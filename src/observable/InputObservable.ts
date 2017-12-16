@@ -67,6 +67,16 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
     })
   }
 
+  formatState(state: FormValues) {
+    return Object.keys(this.fields).reduce(
+      (acc, fieldName) => ({
+        ...acc,
+        [fieldName]: state[fieldName].value,
+      }),
+      {},
+    )
+  }
+
   /**
    * transform the data from the inputs observable
    * @param fieldName - the name of the input
@@ -102,8 +112,8 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
 
   @autobind
   setValue(formValue: FormValues): void {
-    this.handleError(formValue)
-      .map(this.handleTransform)
+    Observable.of(this.handleBeforeValidation(formValue))
+      .map(this.handleError)
       .subscribe(this.next.bind(this))
   }
 
@@ -138,20 +148,13 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
     const inputName = Object.keys(formValue)[0]
     const field = this.fields[inputName]
     const state = this.getValue()
-    const formattedState = Object.keys(this.fields).reduce(
-      (acc, fieldName) => ({
-        ...acc,
-        [fieldName]: state[fieldName].value,
-      }),
-      {},
-    )
 
     if (typeof field.validation === 'function') {
       return Observable.of({
         ...state,
         [inputName]: {
           ...formValue[inputName],
-          error: field.validation(formValue[inputName].value, formattedState, this.props),
+          error: field.validation(formValue[inputName].value, this.formatState(state), this.props),
         },
       })
     } else if (typeof field.validation$ === 'function') {
@@ -164,7 +167,7 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
       })
 
       return field
-        .validation$(formValue[inputName].value, formattedState, this.props)
+        .validation$(formValue[inputName].value, this.formatState(state), this.props)
         .map(error => ({
           ...state,
           [inputName]: {
@@ -187,18 +190,38 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
   }
 
   @autobind
-  handleTransform(formValue: FormValues): FormValues {
+  handleBeforeValidation(formValue: FormValues): FormValues {
     const inputName = Object.keys(formValue)[0]
     const field = this.fields[inputName]
     const state = this.getValue()
 
-    if (typeof field.transform === 'function') {
+    if (typeof field.beforeValidation === 'function') {
       const element = this.inputElements.find(input => input.name === inputName)
-      const value = field.transform(formValue[inputName].value, state, this.props) as string
+      const value = field.beforeValidation(formValue[inputName].value, this.formatState(state), this.props)
 
-      if (element) {
+      if (element && typeof value === 'string') {
         element.value = value
       }
+
+      return {
+        [inputName]: {
+          ...formValue[inputName],
+          value,
+        },
+      }
+    } else {
+      return formValue
+    }
+  }
+
+  @autobind
+  handleAfterValidation(formValue: FormValues): FormValues {
+    const inputName = Object.keys(formValue)[0]
+    const field = this.fields[inputName]
+    const state = this.getValue()
+
+    if (typeof field.afterValidation === 'function') {
+      const value = field.afterValidation(formValue[inputName].value, this.formatState(state), this.props)
 
       return {
         [inputName]: {
@@ -240,8 +263,9 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
 
     this.subscriptions.push(
       Observable.merge(text$, radio$, checkbox$, select$)
+        .map(this.handleBeforeValidation)
         .switchMap(this.handleError)
-        .map(this.handleTransform)
+        .map(this.handleAfterValidation)
         .subscribe(this.handleSubscribe),
     )
   }
