@@ -19,7 +19,8 @@
   "scripts": {
     "test": "nps test",
     "precommit": "lint-staged",
-    "start": "nps"
+    "start": "nps",
+    "semantic-release": "semantic-release"
   },
   "types": "typings/index.d.ts",
   "peerDependencies": {
