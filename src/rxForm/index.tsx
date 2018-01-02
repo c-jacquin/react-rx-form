@@ -239,6 +239,13 @@ export const rxForm = function<Props extends RequiredProps>({
       @autobind
       setValue(state: any): void {
         const key = Object.keys(state)[0]
+
+        if (!fields[key].customInput) {
+          this.inputElements.filter(element => element.getAttribute('name') === key).forEach(element => {
+            element.value = state[key]
+          })
+        }
+
         this.valueChange$.setValue({
           [key]: {
             ...this.state.formValue[key],
