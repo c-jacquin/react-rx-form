@@ -46,14 +46,6 @@ module.exports = {
                 'rollup -c -f cjs -o dist/index.js'
             ),
         },
-        release: {
-            description: 'do the semantic-release stuff',
-            script: series(
-                'semantic-release pre',
-                'npm publish',
-                'semantic-release post'   
-            ),
-        },
         styleguide: {
             description: 'build the styleguide (documentation)',
             script: series(
