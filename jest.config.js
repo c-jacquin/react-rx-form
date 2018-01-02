@@ -24,7 +24,7 @@ module.exports = {
     moduleFileExtensions: ["js", "jsx", "json", "ts", "tsx"],
     setupFiles: [
         'raf/polyfill',        
-        './_scripts_/test/test-setup.js'
+        './scripts/test/test-setup.js'
     ],
     testMatch: ['**/__tests__/*.(ts|tsx|js)'],
     testPathIgnorePatterns: [

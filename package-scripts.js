@@ -42,7 +42,8 @@ module.exports = {
             script: series(
                 'rimraf dist -r',
                 'mkdir dist',
-                'NODE_ENV=production webpack',
+                'rollup -c -f es -o dist/index.es.js',
+                'rollup -c -f cjs -o dist/index.js'
             ),
         },
         release: {
@@ -73,7 +74,7 @@ module.exports = {
                 description: 'run test with istanbul test coverage',
                 script: series(
                     'NODE_ENV=test jest --coverage',
-                    'node _scripts_/test/remap-coverage',
+                    'node scripts/test/remap-coverage',
                     'rimraf .temp -r'
                 ),
             },
