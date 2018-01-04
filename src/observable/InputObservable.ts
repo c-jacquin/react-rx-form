@@ -113,7 +113,7 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
   @autobind
   setValue(formValue: FormValues): void {
     Observable.of(this.handleBeforeValidation(formValue))
-      .map(this.handleError)
+      .switchMap(this.handleError)
       .subscribe(this.next.bind(this))
   }
 
