@@ -31,7 +31,12 @@ export const wizard = function<Props extends RequiredProps>({
       @autobind
       handleSubmit(formValue: FormValues): void {
         const submitted = this.state.currentStep === submitStep
-        const currentStep = submitted ? this.state.currentStep : this.state.currentStep + 1
+        const currentStep = this.state.currentStep < submitStep ? this.state.currentStep + 1 : this.state.currentStep
+        /* tslint:disable */
+        console.log('submitStep', submitStep)
+        console.log('currentStep', currentStep)
+        console.log('wizard formValue submit', formValue)
+        /* tslint:enable */
 
         this.setState(
           {
