@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { findDOMNode } from 'react-dom'
+import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
 import autobind from 'autobind-decorator'
 
@@ -30,6 +31,7 @@ export const rxForm = function<Props extends RequiredProps>({
   throttle = 0,
   beforeSubmit,
   afterSubmit,
+  value$,
 }: RxFormParams<Props>) {
   return (Comp: React.ComponentClass<Props & RxFormProps> | any) => {
     /**
@@ -282,7 +284,30 @@ export const rxForm = function<Props extends RequiredProps>({
 
         // validateFiledsWithInputName(fields, [...this.inputElements, ...this.selectElements])
 
-        this.setInitialInputValues()
+        if (value$) {
+          (typeof value$ === 'function' ? value$(this.props) : value$)
+            .catch(() => Observable.of({}))
+            .toPromise()
+            .then(values => {
+              this.setState(
+                {
+                  formValue: Object.keys(this.state.formValue).reduce(
+                    (acc, key) => ({
+                      ...acc,
+                      [key]: {
+                        ...this.state.formValue[key],
+                        value: (values as any)[key],
+                      },
+                    }),
+                    this.state.formValue,
+                  ),
+                },
+                this.setInitialInputValues.bind(this),
+              )
+            })
+        } else {
+          this.setInitialInputValues()
+        }
 
         this.valueChange$.addInputs(this.inputElements, this.selectElements)
         this.formSubmit$.init(this.formElement)
