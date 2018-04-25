@@ -2,6 +2,8 @@ import { Observable } from 'rxjs/Observable'
 
 export type FieldValue = string | number | boolean | Date
 export type FieldValueFunc<Props> = (props: Props) => FieldValue
+export type Value = Observable<Record<string, FieldValue>>
+export type ValueFunc<T> = (props: T) => Observable<Record<string, FieldValue>>
 
 export interface RxFormParams<Props> {
   fields: Fields<Props>
@@ -10,6 +12,7 @@ export interface RxFormParams<Props> {
   throttle?: number
   beforeSubmit?: (formValue: FormSubmitValues, props: Props) => FormSubmitValues
   afterSubmit?: (formValue: FormSubmitValues, props: Props) => void
+  value$?: Value | ValueFunc<Props>
 }
 
 export interface Fields<Props> {

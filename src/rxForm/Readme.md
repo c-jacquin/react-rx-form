@@ -189,6 +189,7 @@ const onSubmit = (formValue) => {
 ```
 
 ### valueChange$ Observable
+
 > check the console
 
 ```jsx
@@ -285,6 +286,7 @@ const onSubmit = (formValue) => {
 ```
 
 ### debounce, throttle
+
 ```jsx
 const { rxForm } = require('./index');
 
@@ -333,6 +335,7 @@ const onSubmit = (formValue) => {
 ```
 
 ### Custom input
+
 ```jsx
 const { rxForm } = require('./index');
 const { Editor, EditorState } = require('draft-js');
@@ -419,10 +422,10 @@ const RxTransformForm = rxForm({
 })(TransformForm);
 
 <RxTransformForm onSubmit={console.log} />
-
 ```
 
 Dynamic Form
+
 ```jsx
 const { rxForm } = require('./index');
 
@@ -456,33 +459,56 @@ const RxDynamicForm = rxForm({
 <RxDynamicForm onSubmit={console.log} />
 ```
 
-<!-- ### Bad usage
+Initial async value
+
 ```jsx
 const { rxForm } = require('./index');
-console.error = () => {};
-class BadForm extends React.Component {
+const Rx = require('rxjs');
+
+class DynamicForm extends React.Component {
     render() {
         return (
             <form>
-                <div>
-                    <input placeholder="modify your email" />
-                </div>
-                <div>
-                    <button type="submit">Submit form</button>
-                </div>
+                <input name="dog" />
+               <button type="submit">Submit</button>
             </form>
         )
     }
 }
 
-const RxBadForm = rxForm({
+const RxDynamicForm = rxForm({
     fields: {
-        email: {}
-    }
-})(BadForm);
+        dog: {},
+    },
+    value$: Rx.Observable.of({ dog: 'milou' })
+})(DynamicForm);
 
-const onSubmit = (formValue) => {
-    console.log('form submitted ===> ', formValue)
-};
-<RxBadForm onSubmit={onSubmit} />
-``` -->
+<RxDynamicForm onSubmit={console.log} />
+```
+
+Initial async value
+
+```jsx
+const { rxForm } = require('./index');
+const Rx = require('rxjs');
+
+class DynamicForm extends React.Component {
+    render() {
+        return (
+            <form>
+                <input name="dog" />
+               <button type="submit">Submit</button>
+            </form>
+        )
+    }
+}
+
+const RxDynamicForm = rxForm({
+    fields: {
+        dog: {},
+    },
+    value$: (props) => Rx.Observable.of({ dog: props.dog })
+})(DynamicForm);
+
+<RxDynamicForm onSubmit={console.log} dog="pif" />
+```
