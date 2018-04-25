@@ -2,6 +2,7 @@ import * as React from 'react'
 import { findDOMNode } from 'react-dom'
 import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
+import { tap, catchError, map, debounceTime, throttleTime } from 'rxjs/operators'
 import autobind from 'autobind-decorator'
 
 import { FormValues, RequiredProps, RxFormState, RxFormProps, RxFormParams } from '../types'
@@ -286,7 +287,7 @@ export const rxForm = function<Props extends RequiredProps>({
 
         if (value$) {
           (typeof value$ === 'function' ? value$(this.props) : value$)
-            .catch(() => Observable.of({}))
+            .pipe(catchError(() => Observable.of({})))
             .toPromise()
             .then(values => {
               this.setState(
@@ -313,15 +314,16 @@ export const rxForm = function<Props extends RequiredProps>({
         this.formSubmit$.init(this.formElement)
 
         this.valueChangeSubscription = this.valueChange$
-          .debounceTime(debounce)
-          .throttleTime(throttle)
+          .pipe(debounceTime(debounce), throttleTime(throttle))
           .subscribe(this.handleValueChangeSuccess)
 
         this.formSubmitSubscription = this.formSubmit$
-          .map(formValue => {
-            return typeof beforeSubmit === 'function' ? beforeSubmit(formValue, this.props) : formValue
-          })
-          .do(() => this.setState({ submitted: true }))
+          .pipe(
+            map(formValue => {
+              return typeof beforeSubmit === 'function' ? beforeSubmit(formValue, this.props) : formValue
+            }),
+            tap(() => this.setState({ submitted: true })),
+          )
           .subscribe(formValue => {
             this.props.onSubmit(formValue)
             if (typeof afterSubmit === 'function') {

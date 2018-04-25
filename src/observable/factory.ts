@@ -1,17 +1,18 @@
-import { Observable } from 'rxjs/Observable'
+import { fromEvent } from 'rxjs/observable/fromEvent'
+import { merge } from 'rxjs/observable/merge'
 
-import 'rxjs/add/observable/merge'
-import 'rxjs/add/observable/fromEvent'
-import 'rxjs/add/observable/of'
+// import 'rxjs/add/observable/merge'
+// import 'rxjs/add/observable/fromEvent'
+// import 'rxjs/add/observable/of'
 
-import 'rxjs/add/operator/do'
-import 'rxjs/add/operator/filter'
-import 'rxjs/add/operator/map'
-import 'rxjs/add/operator/merge'
-import 'rxjs/add/operator/mergeMap'
-import 'rxjs/add/operator/switchMap'
-import 'rxjs/add/operator/debounceTime'
-import 'rxjs/add/operator/throttleTime'
+// import 'rxjs/add/operator/do'
+// import 'rxjs/add/operator/filter'
+// import 'rxjs/add/operator/map'
+// import 'rxjs/add/operator/merge'
+// import 'rxjs/add/operator/mergeMap'
+// import 'rxjs/add/operator/switchMap'
+// import 'rxjs/add/operator/debounceTime'
+// import 'rxjs/add/operator/throttleTime'
 
 import { ObsFactory, InputObsParams, SelectObsParams, FormObsParams } from '../types'
 
@@ -23,10 +24,8 @@ import { ObsFactory, InputObsParams, SelectObsParams, FormObsParams } from '../t
  * @param param.event - the event to listen (change, input ...)
  */
 export const createInputObservable: ObsFactory<InputObsParams> = ({ elements, types, event = 'change' }) => {
-  return Observable.merge(
-    ...elements
-      .filter(element => types.indexOf(element.type) !== -1)
-      .map(element => Observable.fromEvent(element, event)),
+  return merge(
+    ...elements.filter(element => types.indexOf(element.type) !== -1).map(element => fromEvent(element, event)),
   )
 }
 
@@ -37,7 +36,7 @@ export const createInputObservable: ObsFactory<InputObsParams> = ({ elements, ty
  * @param param.event - the event to listen (change ...)
  */
 export const createSelectObservable: ObsFactory<SelectObsParams> = ({ elements, event = 'change' }) => {
-  return Observable.merge(...elements.map(element => Observable.fromEvent(element, event)))
+  return merge(...elements.map(element => fromEvent(element, event)))
 }
 
 /**
@@ -47,5 +46,5 @@ export const createSelectObservable: ObsFactory<SelectObsParams> = ({ elements, 
  * @param param.event - the event to listen (submit ...)
  */
 export const createFormObservable: ObsFactory<FormObsParams> = ({ element, event = 'submit' }) => {
-  return Observable.fromEvent(element, event)
+  return fromEvent(element, event)
 }

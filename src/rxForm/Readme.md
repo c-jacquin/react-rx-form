@@ -1,4 +1,6 @@
-### Simple usecase
+# Examples
+
+## Simple usecase
 
 ```jsx
 const { rxForm } = require('./index');
@@ -39,7 +41,7 @@ const onSubmit = (formValue) => {
 <RxSimpleForm foo="john.snow@nightwatch.com" onSubmit={onSubmit} />
 ```
 
-### Email Validation
+## Email Validation
 
 ```jsx
 const { rxForm } = require('./index');
@@ -51,7 +53,7 @@ class SimpleForm extends React.Component {
                 <div>
                     <input name="email" placeholder="modify your email" />
                     { !!this.props.email.error &&
-                        <div style={{ color: 'red' }}>
+                        <div>
                             { this.props.email.error }
                         </div>
                     }
@@ -90,7 +92,7 @@ const onError = (formValue) => {
 <RxSimpleForm foo="john.snow.nightwatch.com" onSubmit={onSubmit} onError={onError} />
 ```
 
-### Different password validation
+## Different password validation
 
 ```jsx
 const { rxForm } = require('./index');
@@ -105,7 +107,7 @@ class SimpleForm extends React.Component {
                 <div>
                     <input name="repeatPass" type="password" placeholder="repeat your password" />
                     { !!this.props.repeatPass.error &&
-                        <div style={{ color: 'red' }}>
+                        <div>
                             { this.props.repeatPass.error }
                         </div>
                     }
@@ -140,7 +142,7 @@ const onSubmit = (formValue) => {
 <RxSimpleForm onSubmit={onSubmit} />
 ```
 
-### Async validation
+## Async validation
 
 ```jsx
 const { rxForm } = require('./index');
@@ -156,7 +158,7 @@ class SimpleForm extends React.Component {
                         <span>...loading</span>
                     }
                     { !!this.props.githubUser.error &&
-                        <div style={{ color: 'red' }}>
+                        <div>
                             { this.props.githubUser.error }
                         </div>
                     }
@@ -188,7 +190,7 @@ const onSubmit = (formValue) => {
 <RxSimpleForm onSubmit={onSubmit} />
 ```
 
-### valueChange$ Observable
+## valueChange$ Observable
 
 > check the console
 
@@ -285,7 +287,7 @@ const onSubmit = (formValue) => {
 <RxSimpleForm onSubmit={onSubmit} />
 ```
 
-### debounce, throttle
+## debounce, throttle
 
 ```jsx
 const { rxForm } = require('./index');
@@ -297,7 +299,7 @@ class SimpleForm extends React.Component {
                 <div>
                     <input name="email" placeholder="modify your email" />
                     { !!this.props.email.error &&
-                        <div style={{ color: 'red' }}>
+                        <div>
                             { this.props.email.error }
                         </div>
                     }
@@ -334,7 +336,7 @@ const onSubmit = (formValue) => {
 <RxSimpleForm foo="john.snow.nightwatch.com" onSubmit={onSubmit} />
 ```
 
-### Custom input
+## Custom input
 
 ```jsx
 const { rxForm } = require('./index');
@@ -389,7 +391,7 @@ const onSubmit = (formValue) => {
 <RxCustomForm onSubmit={onSubmit} onError={console.log} />
 ```
 
-### LifeCycle
+## LifeCycle
 
 ```jsx
 const { rxForm } = require('./index');

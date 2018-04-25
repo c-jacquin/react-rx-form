@@ -9,19 +9,13 @@ export default {
         'autobind-decorator',
         'rxjs/Observable',
         'rxjs/BehaviorSubject',
-        'rxjs/add/observable/merge',
-        'rxjs/add/observable/fromEvent',
-        'rxjs/add/observable/of',
-        'rxjs/add/operator/do',
-        'rxjs/add/operator/filter',
-        'rxjs/add/operator/map',
-        'rxjs/add/operator/merge',
-        'rxjs/add/operator/mergeMap',
-        'rxjs/add/operator/switchMap',
-        'rxjs/add/operator/debounceTime',
-        'rxjs/add/operator/throttleTime', 
         'rxjs/Subject',
-        'rxjs/Subscription'
+        'rxjs/Subscription',
+        'rxjs/operators',
+        'rxjs/observable/of',
+        'rxjs/observable/fromEvent',
+        'rxjs/observable/fromPromise',
+        'rxjs/observable/merge'
     ],
     plugins: [
         typescriptPlugin({
