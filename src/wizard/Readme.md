@@ -1,3 +1,5 @@
+# Example
+
 ```jsx
 const { rxForm } = require('../rxForm')
 const { wizard } = require('./index')
@@ -10,7 +12,7 @@ class FirstStep extends React.Component {
                 <input name="name" placeholder="enter your name" />
                 <button type="submit">Next</button>
             </form>
-        )   
+        )
     }
 }
 const ReactiveFirstStep = rxForm({
@@ -52,7 +54,7 @@ class FinalStep extends React.Component {
                 <button type="submit">Submit</button>
             </form>
         )
-    } 
+    }
 }
 const ReactiveFinalStep = rxForm({
     fields: {

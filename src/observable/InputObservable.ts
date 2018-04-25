@@ -1,6 +1,8 @@
 import { Observable } from 'rxjs/Observable'
 import { BehaviorSubject } from 'rxjs/BehaviorSubject'
 import { Subscription } from 'rxjs/Subscription'
+import { of } from 'rxjs/observable/of'
+import { tap, map, switchMap } from 'rxjs/operators'
 import autobind from 'autobind-decorator'
 
 import { FieldValue, InputEvent, FormValues, Fields } from '../types'
@@ -112,8 +114,8 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
 
   @autobind
   setValue(formValue: FormValues): void {
-    Observable.of(this.handleBeforeValidation(formValue))
-      .switchMap(this.handleError)
+    of(this.handleBeforeValidation(formValue))
+      .pipe(switchMap(this.handleError))
       .subscribe(this.next.bind(this))
   }
 
@@ -150,7 +152,7 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
     const state = this.getValue()
 
     if (typeof field.validation === 'function') {
-      return Observable.of({
+      return of({
         ...state,
         [inputName]: {
           ...formValue[inputName],
@@ -166,16 +168,15 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
         },
       })
 
-      return field
-        .validation$(formValue[inputName].value, this.formatState(state), this.props)
-        .map(error => ({
+      return field.validation$(formValue[inputName].value, this.formatState(state), this.props).pipe(
+        map(error => ({
           ...state,
           [inputName]: {
             ...formValue[inputName],
             error,
           },
-        }))
-        .do(() => {
+        })),
+        tap(() => {
           this.next({
             ...state,
             [inputName]: {
@@ -183,9 +184,10 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
               pending: false,
             },
           })
-        })
+        }),
+      )
     } else {
-      return Observable.of(formValue)
+      return of(formValue)
     }
   }
 
@@ -245,27 +247,25 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
       elements: inputElements,
       event: this.textEvent,
       types: InputObservable.TEXT_INPUT,
-    }).map(this.standardInputFormatter)
+    }).pipe(map(this.standardInputFormatter))
 
     const radio$ = createInputObservable({
       elements: inputElements,
       event: this.radioEvent,
       types: InputObservable.RADIO_INPUT,
-    }).map(this.standardInputFormatter)
+    }).pipe(map(this.standardInputFormatter))
 
     const checkbox$ = createInputObservable({
       elements: inputElements,
       event: this.checkboxEvent,
       types: InputObservable.CHECKBOX_INPUT,
-    }).map(this.checkboxInputFormatter)
+    }).pipe(map(this.checkboxInputFormatter))
 
-    const select$ = createSelectObservable({ elements: selectElements }).map(this.standardInputFormatter)
+    const select$ = createSelectObservable({ elements: selectElements }).pipe(map(this.standardInputFormatter))
 
     this.subscriptions.push(
       Observable.merge(text$, radio$, checkbox$, select$)
-        .map(this.handleBeforeValidation)
-        .switchMap(this.handleError)
-        .map(this.handleAfterValidation)
+        .pipe(map(this.handleBeforeValidation), switchMap(this.handleError), map(this.handleAfterValidation))
         .subscribe(this.handleSubscribe),
     )
   }
