@@ -57,9 +57,9 @@ export const rxForm = function<Props extends RequiredProps>({
       valueChangeSubscription = new Subscription()
       formSubmitSubscription = new Subscription()
 
-      formElement: HTMLFormElement
-      inputElements: HTMLInputElement[]
-      selectElements: HTMLSelectElement[]
+      formElement: HTMLFormElement | undefined
+      inputElements: HTMLInputElement[] | undefined
+      selectElements: HTMLSelectElement[] | undefined
 
       /**
        * bind the root element of the decorated component to the class (must be a form tag)
@@ -68,7 +68,7 @@ export const rxForm = function<Props extends RequiredProps>({
        */
       @autobind
       attachFormElement(instance: React.Component<Props & RxFormProps>): void {
-        const rootNode = findDOMNode(instance)
+        const rootNode = findDOMNode(instance) as Element
 
         if (rootNode) {
           if (rootNode.tagName === 'FORM') {
@@ -133,8 +133,8 @@ export const rxForm = function<Props extends RequiredProps>({
        */
       setInitialInputValues(): void {
         Object.keys(fields).forEach(inputName => {
-          const inputElements = this.inputElements.filter(element => element.getAttribute('name') === inputName)
-          const selectElements = this.selectElements.filter(element => element.getAttribute('name') === inputName)
+          const inputElements = this.inputElements!.filter(element => element.getAttribute('name') === inputName)
+          const selectElements = this.selectElements!.filter(element => element.getAttribute('name') === inputName)
           const fieldValue = this.state.formValue[inputName].value
 
           if (inputElements[0] && fieldValue) {
@@ -225,7 +225,7 @@ export const rxForm = function<Props extends RequiredProps>({
         this.valueChange$.addInputs(
           inputsNames.reduce((acc, inputName) => {
             const inputs = Array.from(
-              this.formElement.querySelectorAll(`input[name=${inputName}]`),
+              this.formElement!.querySelectorAll(`input[name=${inputName}]`),
             ) as HTMLInputElement[]
 
             return [...acc, ...inputs]
@@ -244,7 +244,7 @@ export const rxForm = function<Props extends RequiredProps>({
         const key = Object.keys(state)[0]
 
         if (!fields[key].customInput) {
-          this.inputElements.filter(element => element.getAttribute('name') === key).forEach(element => {
+          this.inputElements!.filter(element => element.getAttribute('name') === key).forEach(element => {
             element.value = state[key]
           })
         }
@@ -278,15 +278,15 @@ export const rxForm = function<Props extends RequiredProps>({
       }
 
       componentDidMount() {
-        this.inputElements = Array.from(this.formElement.querySelectorAll('input')).filter(this.handleFilterInputs)
-        this.selectElements = Array.from(this.formElement.querySelectorAll('select')).filter(this.handleFilterInputs)
+        this.inputElements = Array.from(this.formElement!.querySelectorAll('input')).filter(this.handleFilterInputs)
+        this.selectElements = Array.from(this.formElement!.querySelectorAll('select')).filter(this.handleFilterInputs)
 
-        this.formElement.setAttribute('novalidate', 'true')
+        this.formElement!.setAttribute('novalidate', 'true')
 
         // validateFiledsWithInputName(fields, [...this.inputElements, ...this.selectElements])
 
         if (value$) {
-          (typeof value$ === 'function' ? value$(this.props) : value$)
+          ;(typeof value$ === 'function' ? value$(this.props) : value$)
             .pipe(catchError(() => Observable.of({})))
             .toPromise()
             .then(values => {
@@ -311,7 +311,7 @@ export const rxForm = function<Props extends RequiredProps>({
         }
 
         this.valueChange$.addInputs(this.inputElements, this.selectElements)
-        this.formSubmit$.init(this.formElement)
+        this.formSubmit$.init(this.formElement as HTMLFormElement)
 
         this.valueChangeSubscription = this.valueChange$
           .pipe(debounceTime(debounce), throttleTime(throttle))

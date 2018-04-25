@@ -1,28 +1,34 @@
 {
-    "extends": ["tslint:latest", "@chazzz/tslint-react-config"],
-    "rules": {
-        "indent": [true, "spaces", 2],
-        "align": false,
-        "no-empty": false,  
-        "only-arrow-functions": false,
-        "no-implicit-dependencies": false,   
-        "member-ordering": {
-            "options":{
-                "order": [
-                    "private-static-field",
-                    "protected-static-field",
-                    "public-static-field",
-                    "private-instance-field",
-                    "protected-instance-field",
-                    "public-instance-field",
-                    "private-constructor",
-                    "protected-constructor",
-                    "public-constructor",
-                    "private-instance-method",
-                    "protected-instance-method",
-                    "public-instance-method"
-                ]
-            }
-        }
+  "extends": [
+    "tslint:latest",
+    "@chazzz/tslint-react-config",
+    "tslint-config-prettier"
+  ],
+  "rulesDirectory": ["tslint-plugin-prettier"],
+  "rules": {
+    "prettier": true,
+    "indent": [true, "spaces", 2],
+    "align": false,
+    "no-empty": false,
+    "only-arrow-functions": false,
+    "no-implicit-dependencies": false,
+    "member-ordering": {
+      "options":{
+        "order": [
+          "private-static-field",
+          "protected-static-field",
+          "public-static-field",
+          "private-instance-field",
+          "protected-instance-field",
+          "public-instance-field",
+          "private-constructor",
+          "protected-constructor",
+          "public-constructor",
+          "private-instance-method",
+          "protected-instance-method",
+          "public-instance-method"
+        ]
+      }
     }
+  }
 }
