@@ -2,6 +2,7 @@ import { Observable } from 'rxjs/Observable'
 import { BehaviorSubject } from 'rxjs/BehaviorSubject'
 import { Subscription } from 'rxjs/Subscription'
 import { of } from 'rxjs/observable/of'
+import { merge } from 'rxjs/observable/merge'
 import { tap, map, switchMap } from 'rxjs/operators'
 import autobind from 'autobind-decorator'
 
@@ -264,7 +265,7 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
     const select$ = createSelectObservable({ elements: selectElements }).pipe(map(this.standardInputFormatter))
 
     this.subscriptions.push(
-      Observable.merge(text$, radio$, checkbox$, select$)
+      merge(text$, radio$, checkbox$, select$)
         .pipe(map(this.handleBeforeValidation), switchMap(this.handleError), map(this.handleAfterValidation))
         .subscribe(this.handleSubscribe),
     )
