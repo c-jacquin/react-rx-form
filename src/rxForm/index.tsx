@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { findDOMNode } from 'react-dom'
-import { Observable } from 'rxjs/Observable'
-import { Subscription } from 'rxjs/Subscription'
+import { Observable, of, Subscription } from 'rxjs'
 import { tap, catchError, map, debounceTime, skip, take, throttleTime } from 'rxjs/operators'
 import autobind from 'autobind-decorator'
 
@@ -287,7 +286,7 @@ export const rxForm = function<Props extends RequiredProps>({
 
         if (value$) {
           this.valueSubscription = (typeof value$ === 'function' ? value$(this.props) : value$)
-            .pipe(take(1), catchError(() => Observable.of({})))
+            .pipe(take(1), catchError(() => of({})))
             .subscribe((values: any) => {
               const formattedState = Object.keys(this.state.formValue).reduce((acc, key) => {
                 this.initField(key, values)

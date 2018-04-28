@@ -8,7 +8,7 @@ module.exports = {
         '!src/**/types.ts',
         '!**/node_modules/**'
     ],
-    coverageDirectory: '.temp',
+    coverageDirectory: 'coverage',
     coverageThreshold: {
         global: {
             branches: 50,
@@ -23,7 +23,7 @@ module.exports = {
     ],
     moduleFileExtensions: ["js", "jsx", "json", "ts", "tsx"],
     setupFiles: [
-        'raf/polyfill',        
+        'raf/polyfill',
         './scripts/test/test-setup.js'
     ],
     testMatch: ['**/__tests__/*.(ts|tsx|js)'],
