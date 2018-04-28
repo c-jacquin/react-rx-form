@@ -2,7 +2,8 @@
   "extends": [
     "tslint:latest",
     "@chazzz/tslint-react-config",
-    "tslint-config-prettier"
+    "tslint-config-prettier",
+    "rxjs-tslint-rules"
   ],
   "rulesDirectory": ["tslint-plugin-prettier"],
   "rules": {
