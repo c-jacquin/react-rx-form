@@ -2,6 +2,7 @@ import { Observable } from 'rxjs/Observable'
 import { BehaviorSubject } from 'rxjs/BehaviorSubject'
 import { Subscription } from 'rxjs/Subscription'
 import { of } from 'rxjs/observable/of'
+import { forkJoin } from 'rxjs/observable/forkJoin'
 import { merge } from 'rxjs/observable/merge'
 import { tap, map, switchMap } from 'rxjs/operators'
 import autobind from 'autobind-decorator'
@@ -117,7 +118,20 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
   setValue(formValue: FormValues): void {
     of(this.handleBeforeValidation(formValue))
       .pipe(switchMap(this.handleError))
-      .subscribe(this.next.bind(this))
+      .toPromise()
+      .then(this.next.bind(this))
+  }
+
+  @autobind
+  setValues(formValue: FormValues): void {
+    forkJoin(
+      Object.keys(formValue)
+        .map(key => this.handleBeforeValidation({ [key]: formValue[key] }))
+        .map(this.handleError),
+    )
+      .pipe(map(values => values.reduce((acc, value) => ({ ...acc, ...value }), {})))
+      .toPromise()
+      .then(this.next.bind(this))
   }
 
   /**
