@@ -2,7 +2,7 @@ import * as React from 'react'
 import { findDOMNode } from 'react-dom'
 import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
-import { tap, catchError, map, debounceTime, throttleTime } from 'rxjs/operators'
+import { tap, catchError, map, debounceTime, skip, take, throttleTime } from 'rxjs/operators'
 import autobind from 'autobind-decorator'
 
 import { FormValues, RequiredProps, RxFormState, RxFormProps, RxFormParams } from '../types'
@@ -56,11 +56,11 @@ export const rxForm = function<Props extends RequiredProps>({
 
       valueChangeSubscription = new Subscription()
       formSubmitSubscription = new Subscription()
+      valueSubscription = new Subscription()
 
       formElement: HTMLFormElement | undefined
       inputElements: HTMLInputElement[] | undefined
       selectElements: HTMLSelectElement[] | undefined
-
       /**
        * bind the root element of the decorated component to the class (must be a form tag)
        * handler for the ref attribute of the decorated component
@@ -217,8 +217,6 @@ export const rxForm = function<Props extends RequiredProps>({
 
       /**
        * utility used to add input to the InputObservable instance, usefull for dynamic form
-       * @param {string[]} inputsNames
-       * @param {string[]} selectNames
        */
       @autobind
       handleAddInputs(inputsNames: string[], selectNames = []) {
@@ -234,6 +232,14 @@ export const rxForm = function<Props extends RequiredProps>({
         )
       }
 
+      initField(key: string, state: any): void {
+        if (!fields[key].customInput) {
+          this.inputElements!.filter(element => element.getAttribute('name') === key).forEach(element => {
+            element.value = state[key] || ''
+          })
+        }
+      }
+
       /**
        * Usefull to update the form state without trigering dom event, (custom component)
        * @param {Object} state - the data to add to the state { [fieldName]: fieldValue }
@@ -243,11 +249,7 @@ export const rxForm = function<Props extends RequiredProps>({
       setValue(state: any): void {
         const key = Object.keys(state)[0]
 
-        if (!fields[key].customInput) {
-          this.inputElements!.filter(element => element.getAttribute('name') === key).forEach(element => {
-            element.value = state[key]
-          })
-        }
+        this.initField(key, state)
 
         this.valueChange$.setValue({
           [key]: {
@@ -286,25 +288,21 @@ export const rxForm = function<Props extends RequiredProps>({
         // validateFiledsWithInputName(fields, [...this.inputElements, ...this.selectElements])
 
         if (value$) {
-          ;(typeof value$ === 'function' ? value$(this.props) : value$)
-            .pipe(catchError(() => Observable.of({})))
-            .toPromise()
-            .then(values => {
-              this.setState(
-                {
-                  formValue: Object.keys(this.state.formValue).reduce(
-                    (acc, key) => ({
-                      ...acc,
-                      [key]: {
-                        ...this.state.formValue[key],
-                        value: (values as any)[key],
-                      },
-                    }),
-                    this.state.formValue,
-                  ),
-                },
-                this.setInitialInputValues.bind(this),
-              )
+          this.valueSubscription = (typeof value$ === 'function' ? value$(this.props) : value$)
+            .pipe(take(1), catchError(() => Observable.of({})))
+            .subscribe((values: any) => {
+              const formattedState = Object.keys(this.state.formValue).reduce((acc, key) => {
+                this.initField(key, values)
+                return {
+                  ...acc,
+                  [key]: {
+                    ...this.state.formValue[key],
+                    value: values[key],
+                  },
+                }
+              }, {})
+              this.valueChange$.setValues(formattedState)
+              this.valueSubscription.unsubscribe()
             })
         } else {
           this.setInitialInputValues()
@@ -343,7 +341,7 @@ export const rxForm = function<Props extends RequiredProps>({
           <Comp
             ref={this.attachFormElement}
             formSubmit$={this.formSubmit$}
-            valueChange$={valueChangeObs ? this.valueChange$ : null}
+            valueChange$={valueChangeObs ? this.valueChange$.pipe(skip(value$ ? 1 : 0)) : null}
             setValue={this.setValue}
             addInputs={this.handleAddInputs}
             valid={!this.hasError()}

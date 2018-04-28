@@ -13,6 +13,7 @@ export default {
         'rxjs/Subscription',
         'rxjs/operators',
         'rxjs/observable/of',
+        'rxjs/observable/forkJoin',
         'rxjs/observable/fromEvent',
         'rxjs/observable/fromPromise',
         'rxjs/observable/merge'
