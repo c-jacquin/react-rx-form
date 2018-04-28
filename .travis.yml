@@ -5,19 +5,14 @@ cache:
 notifications:
   email: false
 node_js:
-  - '8'
+  - '9'
 install:
-  - git checkout master
   - npm i
 script:
   - npm start validate
 after_success:
-after_success:
-  - npm install -g travis-deploy-once@4
-  - travis-deploy-once "npm run semantic-release"
+  - npm run travis-deploy-once "npm run semantic-release"
   - npm start coveralls
 branches:
-  only:
-    - master
   except:
     - /^v\d+\.\d+\.\d+$/

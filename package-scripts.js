@@ -7,7 +7,7 @@ module.exports = {
     scripts: {
         default: {
             description: 'run and watch the example',
-            script: 'styleguidist server',            
+            script: 'styleguidist server',
         },
         commit: {
             description: 'commit using conventionnal changelog',
@@ -60,14 +60,12 @@ module.exports = {
             },
             watch: {
                 description: 'run in the amazingly intelligent Jest watch mode',
-                script: 'NODE_ENV=test jest --watch',            
+                script: 'NODE_ENV=test jest --watch',
             },
             cover: {
                 description: 'run test with istanbul test coverage',
                 script: series(
                     'NODE_ENV=test jest --coverage',
-                    'node scripts/test/remap-coverage',
-                    'rimraf .temp -r'
                 ),
             },
         },

@@ -66,4 +66,24 @@ describe('InputObservable class', () => {
       })
     })
   })
+
+  describe('setValues method', () => {
+    it('should make inputObservable emit e new value', next => {
+      const obs$ = new InputObservable({ inputElements })
+      obs$.setValues({})
+      obs$.subscribe(() => {
+        next()
+      })
+    })
+  })
+
+  describe('setValue method', () => {
+    it('should make inputObservable emit e new value', next => {
+      const obs$ = new InputObservable({ inputElements, fields: { foo: {} } })
+      obs$.setValue({ foo: { value: '' } })
+      obs$.subscribe(() => {
+        next()
+      })
+    })
+  })
 })

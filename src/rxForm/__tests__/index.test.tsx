@@ -1,8 +1,7 @@
 /* tslint:disable:max-classes-per-file */
 
 import * as React from 'react'
-import { Observable } from 'rxjs/Observable'
-import { Subscription } from 'rxjs/Subscription'
+import { Observable, Subscription } from 'rxjs'
 import { mount } from 'enzyme'
 import { rxForm } from '../index'
 import { RxFormError } from '../utils/validation'

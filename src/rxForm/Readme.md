@@ -146,7 +146,9 @@ const onSubmit = (formValue) => {
 
 ```jsx
 const { rxForm } = require('./index');
-const Rx = require('rxjs');
+const { of } = require('rxjs');
+const { ajax } = require('rxjs/ajax');
+const { catchError, mapTo } = require('rxjs/operators');
 
 class SimpleForm extends React.Component {
     render() {
@@ -175,9 +177,10 @@ const RxSimpleForm = rxForm({
     fields: {
         githubUser: {
             validation$: (value) => {
-                return Rx.Observable.ajax(`https://api.github.com/users/${value}`)
-                    .mapTo('this user already exists')
-                    .catch(() => Rx.Observable.of(undefined))
+                return ajax(`https://api.github.com/users/${value}`).pipe(
+                  mapTo('this user already exists'),
+                  catchError(() => of(undefined)),
+                )
             }
         }
     }
@@ -465,7 +468,7 @@ Initial async value
 
 ```jsx
 const { rxForm } = require('./index');
-const Rx = require('rxjs');
+const { of } = require('rxjs');
 
 class DynamicForm extends React.Component {
     render() {
@@ -482,7 +485,7 @@ const RxDynamicForm = rxForm({
     fields: {
         dog: {},
     },
-    value$: Rx.Observable.of({ dog: 'milou' })
+    value$: of({ dog: 'milou' })
 })(DynamicForm);
 
 <RxDynamicForm onSubmit={console.log} />
@@ -492,7 +495,7 @@ Initial async value
 
 ```jsx
 const { rxForm } = require('./index');
-const Rx = require('rxjs');
+const { of } = require('rxjs');
 
 class DynamicForm extends React.Component {
     render() {
@@ -509,7 +512,7 @@ const RxDynamicForm = rxForm({
     fields: {
         dog: {},
     },
-    value$: (props) => Rx.Observable.of({ dog: props.dog })
+    value$: (props) => of({ dog: props.dog })
 })(DynamicForm);
 
 <RxDynamicForm onSubmit={console.log} dog="pif" />

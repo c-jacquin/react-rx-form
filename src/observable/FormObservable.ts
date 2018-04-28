@@ -1,5 +1,4 @@
-import { Subject } from 'rxjs/Subject'
-import { BehaviorSubject } from 'rxjs/BehaviorSubject'
+import { BehaviorSubject, Subject } from 'rxjs'
 import { filter, map } from 'rxjs/operators'
 import autobind from 'autobind-decorator'
 

@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs/Observable'
+import { Observable } from 'rxjs'
 
 export type FieldValue = string | number | boolean | Date
 export type FieldValueFunc<Props> = (props: Props) => FieldValue

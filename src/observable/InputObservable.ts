@@ -1,9 +1,4 @@
-import { Observable } from 'rxjs/Observable'
-import { BehaviorSubject } from 'rxjs/BehaviorSubject'
-import { Subscription } from 'rxjs/Subscription'
-import { of } from 'rxjs/observable/of'
-import { forkJoin } from 'rxjs/observable/forkJoin'
-import { merge } from 'rxjs/observable/merge'
+import { BehaviorSubject, forkJoin, merge, Observable, of, Subscription } from 'rxjs'
 import { tap, map, switchMap } from 'rxjs/operators'
 import autobind from 'autobind-decorator'
 

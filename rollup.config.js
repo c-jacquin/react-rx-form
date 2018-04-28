@@ -7,16 +7,8 @@ export default {
         'react',
         'react-dom',
         'autobind-decorator',
-        'rxjs/Observable',
-        'rxjs/BehaviorSubject',
-        'rxjs/Subject',
-        'rxjs/Subscription',
+        'rxjs',
         'rxjs/operators',
-        'rxjs/observable/of',
-        'rxjs/observable/forkJoin',
-        'rxjs/observable/fromEvent',
-        'rxjs/observable/fromPromise',
-        'rxjs/observable/merge'
     ],
     plugins: [
         typescriptPlugin({
