@@ -1,7 +1,7 @@
 /* tslint:disable:max-classes-per-file */
 
 import * as React from 'react'
-import { Observable, Subscription } from 'rxjs'
+import { of, Observable, Subscription } from 'rxjs'
 import { mount } from 'enzyme'
 import { rxForm } from '../index'
 import { RxFormError } from '../utils/validation'
@@ -548,6 +548,17 @@ describe('rxForm HoC', () => {
           expect(() => {
             mount(<ReactiveForm onSubmit={jest.fn()} />)
           }).toThrow(`country ${RxFormError.TYPE} string`)
+        })
+
+        it('should set the value to a selet element via value$ observable', () => {
+          const ReactiveForm = rxForm<SimpleFormProps>({
+            fields: {
+              country: {},
+            },
+            value$: of({ country: 'grh' }),
+          })(SelectForm)
+          mount(<ReactiveForm onSubmit={jest.fn()} />)
+          expect(selectElement.value).toBe('grh')
         })
       })
     })
