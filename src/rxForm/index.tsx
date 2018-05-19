@@ -236,6 +236,10 @@ export const rxForm = function<Props extends RequiredProps>({
           this.inputElements!.filter(element => element.getAttribute('name') === key).forEach(element => {
             element.value = state[key] || ''
           })
+
+          this.selectElements!.filter(element => element.getAttribute('name') === key).forEach(element => {
+            element.value = state[key] || ''
+          })
         }
       }
 
