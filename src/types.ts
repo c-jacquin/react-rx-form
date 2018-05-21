@@ -38,7 +38,7 @@ export interface Field<Props> {
 }
 
 export interface RequiredProps {
-  onSubmit: (formValues: FormSubmitValues) => any
+  onSubmit?: (formValues: FormSubmitValues) => any
   onError?: (error: FormErrors) => any
 }
 
