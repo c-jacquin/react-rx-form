@@ -253,7 +253,6 @@ export const rxForm = function<Props extends RequiredProps>({
         const key = Object.keys(state)[0]
 
         this.initField(key, state)
-
         this.valueChange$.setValue({
           [key]: {
             ...this.state.formValue[key],
@@ -270,7 +269,10 @@ export const rxForm = function<Props extends RequiredProps>({
       handleValueChangeSuccess(formValue: FormValues): void {
         this.setState({
           dirty: true,
-          formValue,
+          formValue: {
+            ...this.state.formValue,
+            ...formValue,
+          },
         })
       }
 
