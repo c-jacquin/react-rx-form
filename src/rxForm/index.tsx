@@ -326,7 +326,9 @@ export const rxForm = function<Props extends RequiredProps>({
             tap(() => this.setState({ submitted: true })),
           )
           .subscribe(formValue => {
-            this.props.onSubmit(formValue)
+            if (this.props.onSubmit) {
+              this.props.onSubmit(formValue)
+            }
             if (typeof afterSubmit === 'function') {
               afterSubmit(formValue, this.props)
             }
