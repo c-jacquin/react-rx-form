@@ -67,6 +67,8 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
   }
 
   formatState(state: FormValues) {
+    /* tslint:disable */
+    console.log('RX format state', state, Object.keys(this.fields))
     return Object.keys(this.fields).reduce(
       (acc, fieldName) => ({
         ...acc,
@@ -114,7 +116,12 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
     of(this.handleBeforeValidation(formValue))
       .pipe(switchMap(this.handleError))
       .toPromise()
-      .then(this.next.bind(this))
+      .then(state => {
+        this.next({
+          ...this.getValue(),
+          ...state,
+        })
+      })
   }
 
   @autobind
