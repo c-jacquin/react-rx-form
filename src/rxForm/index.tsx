@@ -32,7 +32,7 @@ export const rxForm = function<Props extends RequiredProps>({
   beforeSubmit,
   afterSubmit,
   value$,
-}: RxFormParams<Props>) {
+}: RxFormParams<Props>): any {
   return (Comp: React.ComponentClass<Props & RxFormProps> | any) => {
     /**
      * RxForm Higher order component
@@ -292,7 +292,10 @@ export const rxForm = function<Props extends RequiredProps>({
 
         if (value$) {
           this.valueSubscription = (typeof value$ === 'function' ? value$(this.props) : value$)
-            .pipe(take(1), catchError(() => of({})))
+            .pipe(
+              take(1),
+              catchError(() => of({})),
+            )
             .subscribe((values: any) => {
               const formattedState = Object.keys(this.state.formValue).reduce((acc, key) => {
                 this.initField(key, values)
@@ -315,7 +318,10 @@ export const rxForm = function<Props extends RequiredProps>({
         this.formSubmit$.init(this.formElement as HTMLFormElement)
 
         this.valueChangeSubscription = this.valueChange$
-          .pipe(debounceTime(debounce), throttleTime(throttle))
+          .pipe(
+            debounceTime(debounce),
+            throttleTime(throttle),
+          )
           .subscribe(this.handleValueChangeSuccess)
 
         this.formSubmitSubscription = this.formSubmit$
