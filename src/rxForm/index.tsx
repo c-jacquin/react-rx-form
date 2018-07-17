@@ -341,6 +341,10 @@ export const rxForm = function<Props extends RequiredProps>({
           })
       }
 
+      componentDidUpdate() {
+        this.valueChange$.props = this.props
+      }
+
       componentWillUnmount() {
         this.formSubmitSubscription.unsubscribe()
         this.valueChangeSubscription.unsubscribe()
