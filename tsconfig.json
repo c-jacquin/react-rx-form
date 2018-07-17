@@ -18,6 +18,7 @@
         "alwaysStrict": true,
         "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
         "experimentalDecorators": true
     },
     "include": [

@@ -43,7 +43,7 @@ export const wizard = function<Props extends RequiredProps>({
             submitted,
           },
           () => {
-            if (submitted) {
+            if (submitted && this.props.onSubmit) {
               this.props.onSubmit(this.state.formValue)
             }
           },

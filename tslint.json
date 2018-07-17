@@ -1,8 +1,8 @@
 {
   "extends": [
     "tslint:latest",
-    "@chazzz/tslint-react-config",
     "tslint-config-prettier",
+    "tslint-react",
     "rxjs-tslint-rules"
   ],
   "rulesDirectory": ["tslint-plugin-prettier"],
@@ -13,6 +13,10 @@
     "no-empty": false,
     "only-arrow-functions": false,
     "no-implicit-dependencies": false,
+    "member-access": false,
+    "ordered-imports": false,
+    "no-submodule-imports": false,
+    "interface-name": false,
     "member-ordering": {
       "options":{
         "order": [

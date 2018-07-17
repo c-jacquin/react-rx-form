@@ -1,4 +1,4 @@
-/* tslint:disable:max-classes-per-file */
+/* tslint:disable:max-classes-per-file no-console */
 
 import * as React from 'react'
 import { of, Observable, Subscription } from 'rxjs'
@@ -106,7 +106,7 @@ describe('rxForm HoC', () => {
         test: {},
       },
     })(SimpleForm)
-    const mounted = mount(<DecoratedComponent onSubmit={onSubmit} />)
+    const mounted = mount<any, any>(<DecoratedComponent onSubmit={onSubmit} />)
 
     expect(mounted.state().dirty).toEqual(DecoratedComponent.prototype.initState().dirty)
     expect(mounted.state().submitted).toBeFalsy()
@@ -143,7 +143,7 @@ describe('rxForm HoC', () => {
         },
       },
     })(SimpleForm)
-    const mounted = mount(<DecoratedComponent onSubmit={onSubmit} foo={'bar'} />)
+    const mounted = mount<any, any>(<DecoratedComponent onSubmit={onSubmit} foo={'bar'} />)
 
     expect(mounted.state().formValue.test).toEqual({
       dirty: true,
@@ -160,7 +160,7 @@ describe('rxForm HoC', () => {
         },
       },
     })(SimpleForm)
-    const mounted = mount(<DecoratedComponent onSubmit={onSubmit} />)
+    const mounted = mount<any, any>(<DecoratedComponent onSubmit={onSubmit} />)
 
     expect(mounted.state().dirty).toBeTruthy()
   })
