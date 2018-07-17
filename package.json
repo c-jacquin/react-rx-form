@@ -32,7 +32,6 @@
     "autobind-decorator": "^2.1.0"
   },
   "devDependencies": {
-    "@chazzz/tslint-react-config": "^1.0.2",
     "@types/enzyme": "^3.1.12",
     "@types/fbemitter": "^2.0.32",
     "@types/jest": "^23.3.0",

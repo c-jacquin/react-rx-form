@@ -60,7 +60,10 @@ export class FormObservable extends Subject<FormSubmitValues> {
 
   init(element: HTMLFormElement) {
     return createFormObservable({ element, event: FormObservable.EVENT })
-      .pipe(map(this.handleFormSubmit), filter(() => !this.hasError))
+      .pipe(
+        map(this.handleFormSubmit),
+        filter(() => !this.hasError),
+      )
       .subscribe(this.next.bind(this))
   }
 }
