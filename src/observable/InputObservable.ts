@@ -67,8 +67,6 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
   }
 
   formatState(state: FormValues) {
-    /* tslint:disable */
-    console.log('RX format state', state, Object.keys(this.fields))
     return Object.keys(this.fields).reduce(
       (acc, fieldName) => ({
         ...acc,
@@ -282,7 +280,11 @@ export class InputObservable<Props> extends BehaviorSubject<FormValues> {
 
     this.subscriptions.push(
       merge(text$, radio$, checkbox$, select$)
-        .pipe(map(this.handleBeforeValidation), switchMap(this.handleError), map(this.handleAfterValidation))
+        .pipe(
+          map(this.handleBeforeValidation),
+          switchMap(this.handleError),
+          map(this.handleAfterValidation),
+        )
         .subscribe(this.handleSubscribe),
     )
   }
